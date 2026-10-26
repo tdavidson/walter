@@ -7,10 +7,10 @@ import { fail } from './errors.ts'
 import { orderFlows } from './flows.ts'
 import { accruedPreferred, type Dated, type Reduction } from './hurdle.ts'
 import { apportion, roundByPartner } from './rounding.ts'
-import { normalizeTerms, type NormalizedTerms } from './terms.ts'
-import type { WaterfallState } from './tiers/context.ts'
+import { normalizeTerms, type NormalizedClass, type NormalizedTerms } from './terms.ts'
+import type { TierContext, WaterfallState } from './tiers/context.ts'
 import type { Allocation, Flow, Purpose, Terms, Treatment } from './types.ts'
-import { cloneState, emptyState, runTiers } from './waterfall.ts'
+import { cloneState, emptyState, runTiers, type TierResult } from './waterfall.ts'
 
 export interface AllocateOptions {
   /**
@@ -30,6 +30,8 @@ export interface AllocateOutput {
   warnings: string[]
   /** The GP's share received through the tiers, before any clawback. */
   gpPaid: Dec
+  /** The same, class by class. */
+  gpPaidByClass: Map<string, Dec>
 }
 
 interface PartnerBook {
@@ -39,6 +41,23 @@ interface PartnerBook {
   returned: Dec
   contributed: Dec
   distributed: Dec
+}
+
+/**
+ * One class's side of the waterfall: its carry-bearing partners and the cumulative state its tiers
+ * see. Without classes there is one, the fund's own, and it is the whole carry-bearing side.
+ */
+interface ClassBook {
+  cls: NormalizedClass
+  /** Indexes into the partners of its carry-bearing members. */
+  members: number[]
+  ws: WaterfallState
+  reductions: Reduction[]
+  lpDistributions: Dated[]
+  /** Capital, dated: cash contributions that count, and recontributions. */
+  contributions: Dated[]
+  cash: Dec
+  deemed: Dec
 }
 
 interface Deal {
@@ -62,14 +81,9 @@ class Run {
   private readonly lifetime: boolean
   private readonly mu: number
   private readonly books = new Map<string, PartnerBook>()
-  private readonly cb: Set<string>
-  private ws: WaterfallState
-  private readonly reductions: Reduction[] = []
-  private readonly lpDistributions: Dated[] = []
-  /** Carry-bearing capital, dated: cash contributions that count, and recontributions. */
-  private readonly cbContributions: Dated[] = []
-  private deemedCb = ZERO
-  private cashCb = ZERO
+  /** The carry-bearing side, class by class: only classes with a carry-bearing member. */
+  private readonly classBooks: ClassBook[]
+  private readonly classOf = new Map<string, ClassBook>()
   private cashAll = ZERO
   private feesAndExpenses = ZERO
   private feesPaid = ZERO
@@ -84,9 +98,29 @@ class Run {
     this.lifetime = opts.lifetime ?? false
     this.mu = nt.minorUnits
     for (const p of nt.partners) this.books.set(p.id, { capital: ZERO, returned: ZERO, contributed: ZERO, distributed: ZERO })
-    this.cb = new Set(nt.partners.filter((p) => p.carryBearing).map((p) => p.id))
-    this.ws = emptyState(this.lifetime ? lifetimeCapital(nt, flows) : ZERO)
-    this.out = { allocations: [], recontributions: [], recycled: [], accruedCarry: [], totals: {}, warnings: [], gpPaid: ZERO }
+    this.classBooks = nt.classes
+      .map((cls): ClassBook => ({
+        cls,
+        members: nt.partners.map((p, i) => (p.carryBearing && p.class === cls.id ? i : -1)).filter((i) => i >= 0),
+        ws: emptyState(this.lifetime ? lifetimeCapital(nt, flows, cls.id) : ZERO),
+        reductions: [],
+        lpDistributions: [],
+        contributions: [],
+        cash: ZERO,
+        deemed: ZERO,
+      }))
+      .filter((c) => c.members.length > 0)
+    for (const c of this.classBooks) for (const i of c.members) this.classOf.set(nt.partners[i].id, c)
+    this.out = {
+      allocations: [],
+      recontributions: [],
+      recycled: [],
+      accruedCarry: [],
+      totals: {},
+      warnings: [],
+      gpPaid: ZERO,
+      gpPaidByClass: new Map(),
+    }
   }
 
   go(terms: Terms, rawFlows: Flow[]): AllocateOutput {
@@ -114,7 +148,8 @@ class Run {
           break
       }
     }
-    this.out.gpPaid = this.ws.gp
+    this.out.gpPaid = this.gpPaid()
+    for (const c of this.classBooks) this.out.gpPaidByClass.set(c.cls.id, c.ws.gp)
     for (const p of this.nt.partners) {
       const b = this.books.get(p.id)!
       this.out.totals[p.id] = {
@@ -136,10 +171,15 @@ class Run {
     b.capital = b.capital.plus(amount)
     this.cashAll = this.cashAll.plus(amount)
     if (FEE_PURPOSES.includes(purpose)) this.feesAndExpenses = this.feesAndExpenses.plus(amount)
-    if (this.cb.has(partner)) {
-      this.cashCb = this.cashCb.plus(amount)
-      this.cbContributions.push({ date, amount })
+    const c = this.classOf.get(partner)
+    if (c) {
+      c.cash = c.cash.plus(amount)
+      c.contributions.push({ date, amount })
     }
+  }
+
+  private gpPaid(): Dec {
+    return sum(this.classBooks.map((c) => c.ws.gp))
   }
 
   private invest(date: string, deal: string, amount: Dec) {
@@ -170,15 +210,15 @@ class Run {
   // ── The capital the first tier owes, and what the hurdle accrues on ───────
 
   /**
-   * Deal by deal, the first tier owes the carry-bearing capital in deals realized so far: realized
-   * cost × (carry-bearing capital ÷ all capital) × (1 + fees and expenses ÷ invested cost), never
-   * more than the carry-bearing capital contributed. The hurdle accrues on each realized slice from
+   * Deal by deal, the first tier owes a class the capital in deals realized so far: realized
+   * cost × (the class's capital ÷ all capital) × (1 + fees and expenses ÷ invested cost), never
+   * more than the class's capital contributed. The hurdle accrues on each realized slice from
    * the date it was invested.
    */
-  private dealByDealBase(): { capital: Dec; contributions: Dated[] } {
+  private dealByDealBase(c: ClassBook): { capital: Dec; contributions: Dated[] } {
     const factor =
       this.cashAll.gt(0) && this.investedCost.gt(0)
-        ? this.cashCb.div(this.cashAll).times(ONE.plus(this.feesAndExpenses.div(this.investedCost)))
+        ? c.cash.div(this.cashAll).times(ONE.plus(this.feesAndExpenses.div(this.investedCost)))
         : ZERO
     const slices: Dated[] = []
     for (const d of this.deals.values()) {
@@ -187,14 +227,14 @@ class Run {
       for (const inv of d.investments) slices.push({ date: inv.date, amount: inv.amount.times(share).times(factor) })
     }
     let realized = sum(slices.map((s) => s.amount))
-    if (realized.gt(this.cashCb) && realized.gt(0)) {
-      const scale = this.cashCb.div(realized)
+    if (realized.gt(c.cash) && realized.gt(0)) {
+      const scale = c.cash.div(realized)
       for (const s of slices) s.amount = s.amount.times(scale)
-      realized = this.cashCb
+      realized = c.cash
     }
-    const deemed = this.cbContributions.filter((c) => c.deemed)
+    const deemed = c.contributions.filter((x) => x.deemed)
     return {
-      capital: realized.plus(this.deemedCb),
+      capital: realized.plus(c.deemed),
       contributions: [...slices, ...deemed],
     }
   }
@@ -239,7 +279,7 @@ class Run {
   private deem(date: string, amount: Dec) {
     const ids = this.nt.partners.map((p) => p.id)
     const shares = apportion(amount, this.nt.partners.map((p) => p.commitment), this.mu)
-    let cbShare = ZERO
+    const cbShare = new Map<ClassBook, Dec>()
     ids.forEach((id, i) => {
       const a = shares[i]
       if (a.isZero()) return
@@ -249,17 +289,19 @@ class Run {
       b.distributed = b.distributed.plus(a)
       this.out.recontributions.push({ date, partner: id, amount: money(a, this.mu) })
       this.out.allocations.push({ date, tier: 'recycled', partner: id, amount: money(a, this.mu) })
-      if (this.cb.has(id)) cbShare = cbShare.plus(a)
+      const c = this.classOf.get(id)
+      if (c) cbShare.set(c, (cbShare.get(c) ?? ZERO).plus(a))
       else b.returned = b.returned.plus(a)
     })
-    if (cbShare.isZero()) return
-    this.cbContributions.push({ date, amount: cbShare, deemed: true })
-    this.deemedCb = this.deemedCb.plus(cbShare)
-    if (!this.lifetime) this.ws.capital = this.ws.capital.plus(cbShare)
-    this.ws.returned = this.ws.returned.plus(cbShare)
-    this.ws.lp = this.ws.lp.plus(cbShare)
-    this.reductions.push({ date, capital: cbShare, preferred: ZERO })
-    this.lpDistributions.push({ date, amount: cbShare })
+    for (const [c, share] of cbShare) {
+      c.contributions.push({ date, amount: share, deemed: true })
+      c.deemed = c.deemed.plus(share)
+      if (!this.lifetime) c.ws.capital = c.ws.capital.plus(share)
+      c.ws.returned = c.ws.returned.plus(share)
+      c.ws.lp = c.ws.lp.plus(share)
+      c.reductions.push({ date, capital: share, preferred: ZERO })
+      c.lpDistributions.push({ date, amount: share })
+    }
   }
 
   private distributeCash(date: string, total: Dec, isRealization: boolean) {
@@ -269,7 +311,15 @@ class Run {
     const w = anyCapital ? weights : partners.map((p) => p.commitment)
     const wTotal = sum(w)
 
-    type Line = { tier: string; partner: string; exact: Dec; kind: 'roc' | 'pref' | 'profit' | 'carry-free-roc' | 'carry-free'; tierId?: string; gp: boolean }
+    type Line = {
+      tier: string
+      partner: string
+      exact: Dec
+      kind: 'roc' | 'pref' | 'profit' | 'carry-free-roc' | 'carry-free'
+      tierId?: string
+      gp: boolean
+      book?: ClassBook
+    }
     const lines: Line[] = []
 
     // Carry-free partners take their pro-rata slice outside the waterfall.
@@ -284,32 +334,84 @@ class Run {
       lines.push({ tier: 'carry-free', partner: p.id, exact: slice.minus(roc), kind: 'carry-free', gp: false })
     })
 
-    const cbIdx = partners.map((p, i) => (p.carryBearing ? i : -1)).filter((i) => i >= 0)
-    const cbWeight = sum(cbIdx.map((i) => w[i]))
-    if (pool.gt(0) && cbIdx.length > 0) {
-      // The capital the first tier owes, and the dated capital the hurdle accrues on.
-      let contributions: Dated[] = this.cbContributions
-      const dealByDeal = !this.lifetime && this.nt.basis === 'deal-by-deal'
-      if (dealByDeal && this.investedCost.isZero()) {
-        this.out.warnings.push(`${date}: deal-by-deal terms with no investment flows run whole-fund`)
-      }
-      if (dealByDeal && this.investedCost.gt(0)) {
-        const base = this.dealByDealBase()
-        this.ws.capital = base.capital
-        contributions = base.contributions
-        if (!isRealization && base.capital.lte(this.ws.returned)) {
-          this.out.warnings.push(`${date}: a distribution with no deal returns no capital deal by deal`)
+    if (pool.gt(0) && this.classBooks.length > 0) {
+      for (const r of this.runClasses(date, pool, w, isRealization)) {
+        const kind = r.tier.type === 'return-of-capital' ? 'roc' : r.tier.type === 'preferred-return' ? 'pref' : 'profit'
+        const members = r.book.members
+        const weight = sum(members.map((i) => w[i]))
+        for (const i of members) {
+          const share = weight.isZero() ? r.lp.div(members.length) : r.lp.times(w[i]).div(weight)
+          lines.push({ tier: r.tier.id, partner: partners[i].id, exact: share, kind, tierId: r.tier.id, gp: false, book: r.book })
         }
-      } else if (!this.lifetime) {
-        this.ws.capital = this.cashCb.plus(this.deemedCb)
+        for (const rec of this.nt.recipients) {
+          lines.push({ tier: r.tier.id, partner: rec.partner, exact: r.gp.times(rec.share), kind, tierId: r.tier.id, gp: true, book: r.book })
+        }
       }
+    }
 
-      const pref = this.nt.tiers.find((t) => t.type === 'preferred-return')
-      const reductions = this.reductions
+    const rounded = roundByPartner(lines, partners.map((p) => p.id), total, this.mu)
+
+    // Book what was actually paid, class by class.
+    const today = new Map<ClassBook, { lp: Dec; roc: Dec; pref: Dec }>()
+    lines.forEach((l, i) => {
+      const a = rounded[i]
+      if (!a.isZero()) this.out.allocations.push({ date, tier: l.tier, partner: l.partner, amount: money(a, this.mu) })
+      const b = this.books.get(l.partner)!
+      b.distributed = b.distributed.plus(a)
+      if (l.kind === 'carry-free-roc') b.returned = b.returned.plus(a)
+      if (l.kind === 'carry-free' || l.kind === 'carry-free-roc' || !l.book) return
+      const s = l.book.ws
+      if (l.gp) {
+        s.gp = s.gp.plus(a)
+        s.profit = s.profit.plus(a)
+        const tier = l.book.cls.tiers.find((t) => t.id === l.tierId)!
+        if (tier.type === 'catch-up') s.catchUp.set(tier.id, (s.catchUp.get(tier.id) ?? ZERO).plus(a))
+        return
+      }
+      const t = today.get(l.book) ?? { lp: ZERO, roc: ZERO, pref: ZERO }
+      t.lp = t.lp.plus(a)
+      if (l.kind === 'roc') t.roc = t.roc.plus(a)
+      else s.profit = s.profit.plus(a)
+      if (l.kind === 'pref') t.pref = t.pref.plus(a)
+      today.set(l.book, t)
+    })
+    for (const [c, t] of today) {
+      c.ws.returned = c.ws.returned.plus(t.roc)
+      c.ws.preferredPaid = c.ws.preferredPaid.plus(t.pref)
+      c.ws.lp = c.ws.lp.plus(t.lp)
+      if (t.lp.gt(0)) c.lpDistributions.push({ date, amount: t.lp })
+      if (t.roc.gt(0) || t.pref.gt(0)) c.reductions.push({ date, capital: t.roc, preferred: t.pref })
+    }
+  }
+
+  /**
+   * The carry-bearing pool through the classes. Return of capital comes first and is shared across
+   * classes: the senior classes are repaid before a subordinated (first-loss) class, each level in
+   * proportion to what it is owed. What's left goes to every class pro rata by capital, and each runs
+   * its own tiers on its share. With one class this is the fund's waterfall, unchanged.
+   */
+  private runClasses(date: string, pool: Dec, w: Dec[], isRealization: boolean): (TierResult & { book: ClassBook })[] {
+    const dealByDeal = !this.lifetime && this.nt.basis === 'deal-by-deal'
+    if (dealByDeal && this.investedCost.isZero()) {
+      this.out.warnings.push(`${date}: deal-by-deal terms with no investment flows run whole-fund`)
+    }
+    const ctxs = new Map<ClassBook, TierContext>()
+    for (const c of this.classBooks) {
+      // The capital the first tier owes the class, and the dated capital its hurdle accrues on.
+      let contributions: Dated[] = c.contributions
+      if (dealByDeal && this.investedCost.gt(0)) {
+        const base = this.dealByDealBase(c)
+        c.ws.capital = base.capital
+        contributions = base.contributions
+      } else if (!this.lifetime) {
+        c.ws.capital = c.cash.plus(c.deemed)
+      }
+      const pref = c.cls.tiers.find((t) => t.type === 'preferred-return')
+      const reductions = c.reductions
       let accrued: Dec | undefined
-      const ctx = {
+      ctxs.set(c, {
         date,
-        state: cloneState(this.ws),
+        state: cloneState(c.ws),
         preferredAccrued: () => {
           if (accrued === undefined) {
             accrued =
@@ -325,67 +427,58 @@ class Run {
           return accrued
         },
         lpContributions: contributions,
-        lpDistributions: this.lpDistributions,
-        remaining: pool,
-      }
-      const results = runTiers(this.nt.tiers, ctx)
-      for (const r of results) {
-        const kind = r.tier.type === 'return-of-capital' ? 'roc' : r.tier.type === 'preferred-return' ? 'pref' : 'profit'
-        for (const i of cbIdx) {
-          const share = cbWeight.isZero() ? r.lp.div(cbIdx.length) : r.lp.times(w[i]).div(cbWeight)
-          lines.push({ tier: r.tier.id, partner: partners[i].id, exact: share, kind, tierId: r.tier.id, gp: false })
-        }
-        for (const rec of this.nt.recipients) {
-          lines.push({ tier: r.tier.id, partner: rec.partner, exact: r.gp.times(rec.share), kind, tierId: r.tier.id, gp: true })
-        }
-      }
+        lpDistributions: c.lpDistributions,
+        remaining: ZERO,
+      })
+    }
+    if (dealByDeal && this.investedCost.gt(0) && !isRealization) {
+      const owed = this.classBooks.every((c) => c.ws.capital.lte(c.ws.returned))
+      if (owed) this.out.warnings.push(`${date}: a distribution with no deal returns no capital deal by deal`)
     }
 
-    const rounded = roundByPartner(lines, partners.map((p) => p.id), total, this.mu)
-
-    // Book what was actually paid.
-    let lpToday = ZERO
-    let roc = ZERO
-    let prefPaid = ZERO
-    const s = this.ws
-    lines.forEach((l, i) => {
-      const a = rounded[i]
-      if (!a.isZero()) this.out.allocations.push({ date, tier: l.tier, partner: l.partner, amount: money(a, this.mu) })
-      const b = this.books.get(l.partner)!
-      b.distributed = b.distributed.plus(a)
-      if (l.kind === 'carry-free-roc') b.returned = b.returned.plus(a)
-      if (l.kind === 'carry-free' || l.kind === 'carry-free-roc') return
-      if (l.gp) {
-        s.gp = s.gp.plus(a)
-        s.profit = s.profit.plus(a)
-        const tier = this.nt.tiers.find((t) => t.id === l.tierId)!
-        if (tier.type === 'catch-up') s.catchUp.set(tier.id, (s.catchUp.get(tier.id) ?? ZERO).plus(a))
-        return
-      }
-      lpToday = lpToday.plus(a)
-      if (l.kind === 'roc') roc = roc.plus(a)
-      else s.profit = s.profit.plus(a)
-      if (l.kind === 'pref') prefPaid = prefPaid.plus(a)
-    })
-    s.returned = s.returned.plus(roc)
-    s.preferredPaid = s.preferredPaid.plus(prefPaid)
-    s.lp = s.lp.plus(lpToday)
-    if (lpToday.gt(0)) this.lpDistributions.push({ date, amount: lpToday })
-    if (roc.gt(0) || prefPaid.gt(0)) this.reductions.push({ date, capital: roc, preferred: prefPaid })
+    const out: (TierResult & { book: ClassBook })[] = []
+    let rest = pool
+    // Return of capital, senior classes first.
+    for (const subordinated of [false, true]) {
+      const level = this.classBooks.filter((c) => c.cls.subordinated === subordinated)
+      const owed = level.map((c) => pos(c.ws.capital.minus(c.ws.returned)))
+      const owedTotal = sum(owed)
+      if (owedTotal.isZero() || rest.lte(0)) continue
+      const paid = min(rest, owedTotal)
+      rest = rest.minus(paid)
+      level.forEach((c, i) => {
+        const ctx = ctxs.get(c)!
+        ctx.remaining = paid.times(owed[i]).div(owedTotal)
+        const roc = c.cls.tiers[0]
+        for (const r of runTiers([roc], ctx)) out.push({ ...r, book: c })
+      })
+    }
+    // Everything after return of capital, each class on its own tiers.
+    if (rest.gt(0)) {
+      const weights = this.classBooks.map((c) => sum(c.members.map((i) => w[i])))
+      const wTotal = sum(weights)
+      this.classBooks.forEach((c, i) => {
+        const ctx = ctxs.get(c)!
+        ctx.remaining = wTotal.isZero() ? rest.div(this.classBooks.length) : rest.times(weights[i]).div(wTotal)
+        for (const r of runTiers(c.cls.tiers, ctx)) out.push({ ...r, book: c })
+      })
+    }
+    return out
   }
 
   // ── The GP's entitlement on the fund-end view ───────────────────────────
 
-  private entitlement(terms: Terms, rawFlows: Flow[], date: string, nav?: Dec): Dec {
+  private entitlement(terms: Terms, rawFlows: Flow[], date: string, nav?: Dec): { total: Dec; byClass: Map<string, Dec> } {
     const upTo = rawFlows.filter((f) => compareDates(f.date, date) <= 0 && f.type !== 'nav' && f.type !== 'fund-end')
     const extra: Flow[] = nav && nav.gt(0) ? [{ type: 'distributable', date, amount: nav.toFixed() }] : []
-    return allocate(terms, [...upTo, ...extra], { lifetime: true }).gpPaid
+    const run = allocate(terms, [...upTo, ...extra], { lifetime: true })
+    return { total: run.gpPaid, byClass: run.gpPaidByClass }
   }
 
   /** Carry accrued at a NAV: what the GP would be entitled to if the fund liquidated at it today. */
   private accrue(terms: Terms, rawFlows: Flow[], date: string, nav: Dec) {
-    const entitlement = this.entitlement(terms, rawFlows, date, nav).toDecimalPlaces(this.mu)
-    const paid = this.ws.gp
+    const entitlement = this.entitlement(terms, rawFlows, date, nav).total.toDecimalPlaces(this.mu)
+    const paid = this.gpPaid()
     this.out.accruedCarry.push({
       date,
       nav: money(nav, this.mu),
@@ -396,12 +489,15 @@ class Run {
   }
 
   /**
-   * At fund end the GP gives back what it was paid beyond its entitlement on the fund-end view. The
-   * LPs receive it pro rata to their capital, and the GP's recipients repay it by their shares.
+   * At fund end the GP gives back what it was paid beyond its entitlement on the fund-end view,
+   * measured class by class and netted across the fund. Each class that paid too much gets back its
+   * share of the excess, its LPs pro rata to their capital, and the GP's recipients repay it by
+   * their shares.
    */
   private clawback(terms: Terms, rawFlows: Flow[], date: string) {
-    const entitlement = this.entitlement(terms, rawFlows, date).toDecimalPlaces(this.mu)
-    const paid = this.ws.gp
+    const ent = this.entitlement(terms, rawFlows, date)
+    const entitlement = ent.total.toDecimalPlaces(this.mu)
+    const paid = this.gpPaid()
     const amount = pos(paid.minus(entitlement))
     this.out.clawback = {
       date,
@@ -417,8 +513,18 @@ class Run {
       const b = this.books.get(r.partner)!
       b.distributed = b.distributed.minus(repay[i])
     })
-    const lps = this.nt.partners.filter((p) => p.carryBearing)
-    const back = apportion(amount, lps.map((p) => this.books.get(p.id)!.capital), this.mu)
+    const excess = this.classBooks.map((c) => pos(c.ws.gp.minus(ent.byClass.get(c.cls.id) ?? ZERO)))
+    const excessTotal = sum(excess)
+    // Each LP's weight: its class's share of the excess, then its share of the class's capital.
+    const lps = this.classBooks.flatMap((c) => c.members.map((i) => this.nt.partners[i]))
+    const weights = this.classBooks.flatMap((c, k) => {
+      const capital = c.members.map((i) => this.books.get(this.nt.partners[i].id)!.capital)
+      const classCapital = sum(capital)
+      return capital.map((cap) =>
+        excessTotal.isZero() || classCapital.isZero() ? ZERO : excess[k].div(excessTotal).times(cap).div(classCapital),
+      )
+    })
+    const back = apportion(amount, weights, this.mu)
     lps.forEach((p, i) => {
       if (back[i].isZero()) return
       this.out.allocations.push({ date, tier: 'clawback', partner: p.id, amount: money(back[i], this.mu) })
@@ -429,11 +535,12 @@ class Run {
 }
 
 /**
- * Lifetime carry-bearing capital: every included contribution in the flows, plus the carry-bearing
- * share of every deemed recycle.
+ * A class's lifetime capital: every included contribution from its carry-bearing partners, plus
+ * their share of every deemed recycle.
  */
-function lifetimeCapital(nt: NormalizedTerms, flows: Flow[]): Dec {
-  const cb = new Set(nt.partners.filter((p) => p.carryBearing).map((p) => p.id))
+function lifetimeCapital(nt: NormalizedTerms, flows: Flow[], classId: string): Dec {
+  const inClass = (p: { carryBearing: boolean; class: string }) => p.carryBearing && p.class === classId
+  const cb = new Set(nt.partners.filter(inClass).map((p) => p.id))
   let total = ZERO
   for (const f of flows) {
     if (f.type === 'contribution' && cb.has(f.partner) && nt.includes.has(f.purpose ?? 'investments')) {
@@ -444,7 +551,7 @@ function lifetimeCapital(nt: NormalizedTerms, flows: Flow[]): Dec {
       if (treatment !== 'deemed') continue
       const shares = apportion(dec(f.recycle.amount), nt.partners.map((p) => p.commitment), nt.minorUnits)
       nt.partners.forEach((p, i) => {
-        if (p.carryBearing) total = total.plus(shares[i])
+        if (inClass(p)) total = total.plus(shares[i])
       })
     }
   }

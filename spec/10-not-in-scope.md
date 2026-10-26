@@ -1,10 +1,7 @@
-# Not in 0.1
+# Not in scope yet
 
-## Next: LP classes (0.2)
-
-Several LP classes with their own carry, pref and fee terms, side-letter fee discounts, first-loss
-classes, and classes on their own capital call schedules. The fund economics tool already models
-these, and they're the first thing 0.2 should add.
+LP classes arrived in 0.2 ([11-lp-classes.md](11-lp-classes.md)), with the parts of them that are
+still out listed there.
 
 ## Not planned yet
 

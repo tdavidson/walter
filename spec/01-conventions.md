@@ -73,6 +73,7 @@ has a code a vector can expect:
 | `invalid-terms` | The terms break a rule in [02-terms.md](02-terms.md) |
 | `invalid-flow` | A flow has an unknown type, a bad date or a negative amount |
 | `unknown-partner` | A contribution or carry recipient names someone not in `partners` |
+| `unknown-class` | A partner names a class that `classes` doesn't define |
 | `no-carry-recipient` | A tier pays the GP but nobody receives it |
 | `recycling-not-permitted` | A distribution recycles, and the terms have no `recycling` |
 | `recycle-over-cap` | The recycling to date would pass the cap |

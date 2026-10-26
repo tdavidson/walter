@@ -32,6 +32,9 @@ Known differences:
 - The fund engine has no clawback: carry paid early shows as accrued against paid on the GP panel.
   Its vectors for runWaterfall state, preferredTarget and carryTarget are function-level; the ones
   ported here were rewritten as terms and flows that produce the same state.
+- The fund engine has no LP classes. A partner's side-letter fee rate (`partner_allocation_terms`,
+  `rate_override` on the management fee) is a class with its own fee steps, one per rate. A
+  partner with its own carry, pref or first-loss position has no equivalent yet.
 
 ## The fund economics tool
 
@@ -44,6 +47,11 @@ Known differences:
 | `carryTiers[].moicThreshold`, `carryPct` | A `split` with `until.lpMultiple` per step |
 | `clawback` | `clawback.enabled` |
 | `features.recycling` (`retained`, `deemed`) | `recycle` on each distribution, `never-distributed` or `deemed` |
+| `lpClasses[]` with `name` | `classes[]` with `id`, and each LP's `class` |
+| `lpClasses[].overrides` (carry, pref, catch-up, carry tiers) | The class's `waterfall` |
+| `lpClasses[].feeOverrides.ratePct` | The class's `managementFee.schedule` |
+| `lpClasses[].isFirstLoss` | `subordinated: true` |
+| `lpClasses[].callSchedule` | The contribution flows: Walter takes calls as given |
 
 Known differences:
 
@@ -53,9 +61,15 @@ Known differences:
   threshold, which isn't a catch-up to a share of profit. On a 20% base stepping to 25% it leaves
   the GP below 25%. Walter's catch-up between two splits brings the GP to exactly the target,
   so the two disagree on those terms until one of them changes.
-- The tool is moving to returning only capital called so far, with clawback on by default (in
-  review as of October 2026), which matches Walter. Until that ships it returns all lifetime
-  capital first.
+- LP classes (`features.lpClasses`) map onto `classes`, with differences below.
+
+LP classes in the tool (as of October 2026) differ from 0.2 in three ways. The tool splits the
+fund's LP totals across classes after the fact instead of running each class's waterfall, so a
+class's pref and catch-up overrides are stored but don't change its distributions. Its first-loss
+class gets back at most its capital, and its share of profit goes to the other classes; in Walter
+it shares profit pro rata once repaid. And a class's fee is its rate on its commitment over the
+fee years, without the fund's step-downs. Each is something the tool would change to pass the
+`classes` vectors.
 
 ## Portfolio forecast
 

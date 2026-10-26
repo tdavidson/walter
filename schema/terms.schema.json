@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/walter/0.1/terms.schema.json",
+  "$id": "https://hemrock.com/walter/0.2/terms.schema.json",
   "title": "Walter terms",
-  "description": "One fund's economic terms: partners, the distribution waterfall, clawback, recycling and the management fee.",
+  "description": "One fund's economic terms: partners, LP classes, the distribution waterfall, clawback, recycling and the management fee.",
   "type": "object",
   "required": [
     "walter",
@@ -13,7 +13,10 @@
   "additionalProperties": false,
   "properties": {
     "walter": {
-      "const": "0.1"
+      "enum": [
+        "0.1",
+        "0.2"
+      ]
     },
     "fund": {
       "type": "object",
@@ -72,6 +75,105 @@
           "feeBearing": {
             "type": "boolean",
             "description": "Default true for an LP, false for the GP."
+          },
+          "class": {
+            "type": "string",
+            "description": "The LP class the partner belongs to (0.2). Absent: the fund's own terms."
+          }
+        }
+      }
+    },
+    "classes": {
+      "type": "array",
+      "description": "LP classes (0.2): groups of partners with tiers or fee rates of their own. Anything a class leaves out is the fund's.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "waterfall": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "The class's own tiers or preset. Basis, what counts as capital and the carry recipients stay the fund's.",
+            "properties": {
+              "preset": {
+                "enum": [
+                  "european-standard",
+                  "american-standard"
+                ]
+              },
+              "presetTerms": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "carry": {
+                    "$ref": "#/$defs/rate"
+                  },
+                  "pref": {
+                    "$ref": "#/$defs/rate"
+                  }
+                }
+              },
+              "tiers": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "$ref": "#/$defs/tier"
+                }
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "tiers"
+                ],
+                "not": {
+                  "required": [
+                    "preset"
+                  ]
+                }
+              },
+              {
+                "required": [
+                  "preset"
+                ],
+                "not": {
+                  "required": [
+                    "tiers"
+                  ]
+                }
+              }
+            ]
+          },
+          "managementFee": {
+            "type": "object",
+            "required": [
+              "schedule"
+            ],
+            "additionalProperties": false,
+            "description": "The class's own fee rates. Frequency, dates, offsets and the expense cap stay the fund's.",
+            "properties": {
+              "schedule": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/feeStep"
+                }
+              }
+            }
+          },
+          "subordinated": {
+            "type": "boolean",
+            "default": false,
+            "description": "First loss: every senior class has its capital back before this class gets any."
+          },
+          "source": {
+            "$ref": "#/$defs/source"
           }
         }
       }
@@ -242,44 +344,7 @@
           "type": "array",
           "minItems": 1,
           "items": {
-            "type": "object",
-            "required": [
-              "from",
-              "rate",
-              "basis"
-            ],
-            "additionalProperties": false,
-            "properties": {
-              "from": {
-                "oneOf": [
-                  {
-                    "$ref": "#/$defs/date"
-                  },
-                  {
-                    "type": "object",
-                    "required": [
-                      "event"
-                    ],
-                    "additionalProperties": false,
-                    "properties": {
-                      "event": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                ]
-              },
-              "rate": {
-                "$ref": "#/$defs/rate"
-              },
-              "basis": {
-                "enum": [
-                  "commitments",
-                  "invested",
-                  "nav"
-                ]
-              }
-            }
+            "$ref": "#/$defs/feeStep"
           }
         },
         "offsets": {
@@ -543,6 +608,46 @@
           }
         }
       ]
+    },
+    "feeStep": {
+      "type": "object",
+      "required": [
+        "from",
+        "rate",
+        "basis"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/date"
+            },
+            {
+              "type": "object",
+              "required": [
+                "event"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "event": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "rate": {
+          "$ref": "#/$defs/rate"
+        },
+        "basis": {
+          "enum": [
+            "commitments",
+            "invested",
+            "nav"
+          ]
+        }
+      }
     }
   }
 }

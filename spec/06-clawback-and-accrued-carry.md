@@ -27,7 +27,9 @@ clawback     = max(0, paid − entitlement)
 ```
 
 The clawback is paid back by the carry recipients, by share, as negative `clawback` lines, and
-received by the carry-bearing LPs, by capital, as positive ones, all dated at fund end. The result
+received by the carry-bearing LPs, by capital, as positive ones, all dated at fund end. With LP
+classes the amount goes to the classes that overpaid, in proportion to how much each overpaid
+([11-lp-classes.md](11-lp-classes.md)). The result
 reports `clawback: { date, paid, entitlement, amount }`. The GP is never topped up when the
 entitlement is above what it was paid.
 

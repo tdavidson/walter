@@ -1,4 +1,4 @@
-# Walter 0.1
+# Walter 0.2
 
 Walter is an open, machine-readable description of how a venture fund's economics work: who
 gets which dollar of a distribution, what the preferred return is on a given day, when the GP
@@ -20,7 +20,7 @@ into a term with a name and a vector for every value, so nothing gets quietly de
 
 ## Scope
 
-0.1 covers the distribution waterfall and the management fee that feeds it:
+0.2 covers the distribution waterfall and the management fee that feeds it:
 
 - whole-fund and deal-by-deal waterfalls, with return of capital on capital contributed so far
   (with or without fees and expenses), a preferred return as a simple or compounding rate on
@@ -31,10 +31,10 @@ into a term with a name and a vector for every value, so nothing gets quietly de
   recontributed, inside the LPA's cap and end date;
 - clawback at fund end, and carry accrued at a NAV;
 - management fees on commitments, invested capital or NAV, with step-downs at a date or an event,
-  fee offsets and an organizational expense cap.
+  fee offsets and an organizational expense cap;
+- LP classes with their own tiers and fee rates, and first-loss classes (new in 0.2).
 
-What it leaves out is in [10-not-in-scope.md](10-not-in-scope.md). The big one for 0.2 is LP
-classes.
+What it leaves out is in [10-not-in-scope.md](10-not-in-scope.md).
 
 ## Reading order
 
@@ -49,7 +49,8 @@ classes.
 | [07-management-fees.md](07-management-fees.md) | Fee periods, steps, offsets |
 | [08-conformance.md](08-conformance.md) | Results, vectors, the runner and the compatibility table |
 | [09-existing-engines.md](09-existing-engines.md) | How the terms map onto the engines that already exist |
-| [10-not-in-scope.md](10-not-in-scope.md) | What 0.1 doesn't model |
+| [10-not-in-scope.md](10-not-in-scope.md) | What Walter doesn't model yet |
+| [11-lp-classes.md](11-lp-classes.md) | LP classes: their terms, distributions, clawback and fees |
 
 ## Conformance language
 
@@ -59,9 +60,12 @@ right until the disagreement is fixed in a pull request that says which one was 
 
 ## Versioning
 
-The terms, flows and result documents each carry `"walter": "0.1"`. A change that alters an
-expected answer, or the meaning of an existing term, is a new minor version until 1.0. Adding a
-term whose absence keeps today's behaviour is not.
+The terms, flows and result documents each carry a version, `"walter": "0.2"`. A change that
+alters an expected answer, or the meaning of an existing term, is a new minor version until 1.0.
+Adding a term whose absence keeps today's behaviour is not.
+
+0.2 adds LP classes and changes no 0.1 answer, so 0.1 terms are still valid and run the same. A
+0.2 engine accepts both and echoes the terms' version in its result. The 0.1 vectors stay at 0.1.
 
 ## Licence
 

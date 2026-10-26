@@ -18,6 +18,10 @@ the **carry-bearing pool**, and the tiers divide it.
 
 ## 3. The tiers
 
+With LP classes (0.2), this step runs class by class, with return of capital shared across them
+first; see [11-lp-classes.md](11-lp-classes.md). Without classes, the carry-bearing partners are
+one class and everything below applies as written.
+
 The tiers run in order on the pool, each taking what it's owed from what's left, until the pool
 runs out. They see one shared state, cumulative over every earlier distribution and the earlier
 tiers of this one, on the carry-bearing side only:
