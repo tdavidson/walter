@@ -6,41 +6,41 @@ engine said it cannot express the terms, which is listed rather than counted as 
 
 | Tag | Walter reference engine 0.2.0 | Hemrock Fund Economics Tool lib/fund-economics period waterfall | Hemrock Portfolio accounting @portfolio/fund-engine 0.2.0 |
 | --- | --- | --- | --- |
-| **All vectors** | **83/83** | **71/71** | **71/71** |
+| **All vectors** | **83/83** | **83/83** | **83/83** |
 | `accrued-carry` | 6/6 | 6/6 | 6/6 |
 | `carry-recipients` | 1/1 | 1/1 | 1/1 |
-| `catch-up-full` | 16/16 | 15/15 | 15/15 |
+| `catch-up-full` | 16/16 | 16/16 | 16/16 |
 | `catch-up-measure-preferred` | 4/4 | 4/4 | 4/4 |
 | `catch-up-measure-profit` | 3/3 | 3/3 | 3/3 |
 | `catch-up-none` | 1/1 | 1/1 | 1/1 |
 | `catch-up-partial` | 7/7 | 7/7 | 7/7 |
-| `classes` | 12/12 |  |  |
-| `clawback` | 6/6 | 5/5 | 5/5 |
+| `classes` | 12/12 | 12/12 | 12/12 |
+| `clawback` | 6/6 | 6/6 | 6/6 |
 | `day-count-30-360` | 3/3 | 3/3 | 3/3 |
 | `day-count-act-365` | 6/6 | 6/6 | 6/6 |
 | `deal-by-deal` | 4/4 | 4/4 | 4/4 |
-| `errors` | 10/10 | 7/7 | 7/7 |
-| `fees` | 9/9 | 7/7 | 7/7 |
-| `fees-committed` | 4/4 | 2/2 | 2/2 |
+| `errors` | 10/10 | 10/10 | 10/10 |
+| `fees` | 9/9 | 9/9 | 9/9 |
+| `fees-committed` | 4/4 | 4/4 | 4/4 |
 | `fees-in-capital` | 3/3 | 3/3 | 3/3 |
 | `fees-invested` | 1/1 | 1/1 | 1/1 |
 | `fees-nav` | 1/1 | 1/1 | 1/1 |
-| `fees-offsets` | 3/3 | 2/2 | 2/2 |
+| `fees-offsets` | 3/3 | 3/3 | 3/3 |
 | `fees-step-down` | 2/2 | 2/2 | 2/2 |
-| `first-loss` | 3/3 |  |  |
-| `gp-commit` | 2/2 | 1/1 | 1/1 |
-| `pref-compound` | 12/12 | 11/11 | 11/11 |
+| `first-loss` | 3/3 | 3/3 | 3/3 |
+| `gp-commit` | 2/2 | 2/2 | 2/2 |
+| `pref-compound` | 12/12 | 12/12 | 12/12 |
 | `pref-contributed` | 5/5 | 5/5 | 5/5 |
 | `pref-multiple` | 2/2 | 2/2 | 2/2 |
 | `pref-simple` | 6/6 | 6/6 | 6/6 |
-| `pref-unreturned` | 10/10 | 9/9 | 9/9 |
+| `pref-unreturned` | 10/10 | 10/10 | 10/10 |
 | `presets` | 1/1 | 1/1 | 1/1 |
 | `recycling` | 8/8 | 8/8 | 8/8 |
 | `recycling-deemed` | 3/3 | 3/3 | 3/3 |
 | `recycling-never-distributed` | 1/1 | 1/1 | 1/1 |
 | `return-of-capital` | 5/5 | 5/5 | 5/5 |
 | `rounding` | 4/4 | 4/4 | 4/4 |
-| `split-only` | 9/9 | 5/5 | 5/5 |
+| `split-only` | 9/9 | 9/9 | 9/9 |
 | `split-tiered` | 2/2 | 2/2 | 2/2 |
 | `split-until-irr` | 1/1 | 1/1 | 1/1 |
 | `split-until-multiple` | 1/1 | 1/1 | 1/1 |
