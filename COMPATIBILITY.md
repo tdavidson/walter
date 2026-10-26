@@ -6,10 +6,10 @@ engine said it cannot express the terms, which is listed rather than counted as 
 
 | Tag | Walter reference engine 0.1.0 | Hemrock Fund Economics Tool lib/fund-economics period waterfall | Hemrock Portfolio accounting @portfolio/fund-engine 0.2.0 |
 | --- | --- | --- | --- |
-| **All vectors** | **71/71** | **71/71** | **68/71** |
+| **All vectors** | **71/71** | **71/71** | **71/71** |
 | `accrued-carry` | 6/6 | 6/6 | 6/6 |
 | `carry-recipients` | 1/1 | 1/1 | 1/1 |
-| `catch-up-full` | 15/15 | 15/15 | 14/15 (1 unsupported) |
+| `catch-up-full` | 15/15 | 15/15 | 15/15 |
 | `catch-up-measure-preferred` | 4/4 | 4/4 | 4/4 |
 | `catch-up-measure-profit` | 3/3 | 3/3 | 3/3 |
 | `catch-up-none` | 1/1 | 1/1 | 1/1 |
@@ -21,7 +21,7 @@ engine said it cannot express the terms, which is listed rather than counted as 
 | `errors` | 7/7 | 7/7 | 7/7 |
 | `fees` | 7/7 | 7/7 | 7/7 |
 | `fees-committed` | 2/2 | 2/2 | 2/2 |
-| `fees-in-capital` | 3/3 | 3/3 | 2/3 (1 unsupported) |
+| `fees-in-capital` | 3/3 | 3/3 | 3/3 |
 | `fees-invested` | 1/1 | 1/1 | 1/1 |
 | `fees-nav` | 1/1 | 1/1 | 1/1 |
 | `fees-offsets` | 2/2 | 2/2 | 2/2 |
@@ -36,15 +36,9 @@ engine said it cannot express the terms, which is listed rather than counted as 
 | `recycling` | 8/8 | 8/8 | 8/8 |
 | `recycling-deemed` | 3/3 | 3/3 | 3/3 |
 | `recycling-never-distributed` | 1/1 | 1/1 | 1/1 |
-| `return-of-capital` | 5/5 | 5/5 | 4/5 (1 unsupported) |
+| `return-of-capital` | 5/5 | 5/5 | 5/5 |
 | `rounding` | 4/4 | 4/4 | 4/4 |
 | `split-only` | 5/5 | 5/5 | 5/5 |
-| `split-tiered` | 2/2 | 2/2 | 0/2 (2 unsupported) |
-| `split-until-irr` | 1/1 | 1/1 | 0/1 (1 unsupported) |
-| `split-until-multiple` | 1/1 | 1/1 | 0/1 (1 unsupported) |
-
-## Hemrock Portfolio accounting: known differences
-
-- `roc-excludes-fees` (unsupported): capital that leaves some contributions out of return of capital (the engine returns every contribution)
-- `split-tiered-irr-catch-up` (unsupported): a split that steps up at a hurdle (the engine has one carry rate)
-- `split-tiered-multiple` (unsupported): a split that steps up at a hurdle (the engine has one carry rate)
+| `split-tiered` | 2/2 | 2/2 | 2/2 |
+| `split-until-irr` | 1/1 | 1/1 | 1/1 |
+| `split-until-multiple` | 1/1 | 1/1 | 1/1 |

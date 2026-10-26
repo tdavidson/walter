@@ -6,9 +6,9 @@
   },
   "summary": {
     "vectors": 71,
-    "pass": 68,
+    "pass": 71,
     "fail": 0,
-    "unsupported": 3
+    "unsupported": 0
   },
   "results": [
     {
@@ -540,10 +540,7 @@
         "return-of-capital",
         "fees-in-capital"
       ],
-      "status": "unsupported",
-      "problems": [
-        "capital that leaves some contributions out of return of capital (the engine returns every contribution)"
-      ]
+      "status": "pass"
     },
     {
       "id": "roc-includes-fees",
@@ -637,10 +634,7 @@
         "split-until-irr",
         "catch-up-full"
       ],
-      "status": "unsupported",
-      "problems": [
-        "a split that steps up at a hurdle (the engine has one carry rate)"
-      ]
+      "status": "pass"
     },
     {
       "id": "split-tiered-multiple",
@@ -649,10 +643,7 @@
         "split-tiered",
         "split-until-multiple"
       ],
-      "status": "unsupported",
-      "problems": [
-        "a split that steps up at a hurdle (the engine has one carry rate)"
-      ]
+      "status": "pass"
     },
     {
       "id": "split-zero-carry",
