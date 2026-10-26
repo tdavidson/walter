@@ -1,18 +1,18 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/waterline/0.1/terms.schema.json",
-  "title": "Waterline terms",
+  "$id": "https://hemrock.com/walter/0.1/terms.schema.json",
+  "title": "Walter terms",
   "description": "One fund's economic terms: partners, the distribution waterfall, clawback, recycling and the management fee.",
   "type": "object",
   "required": [
-    "waterline",
+    "walter",
     "fund",
     "partners",
     "waterfall"
   ],
   "additionalProperties": false,
   "properties": {
-    "waterline": {
+    "walter": {
       "const": "0.1"
     },
     "fund": {

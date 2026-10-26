@@ -1,6 +1,6 @@
 {
   "id": "catch-up-partial-target",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A catch-up to less than the carry rate",
   "description": "Catch up to 10% while the split is 20%: the GP catches up 0.1 × 80 ÷ 0.9 = 8.89, then 80/20 on the 411.11 left.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

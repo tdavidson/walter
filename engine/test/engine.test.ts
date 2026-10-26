@@ -4,11 +4,11 @@ import { D } from '../src/decimal.ts'
 import { addMonths, yearFraction } from '../src/dates.ts'
 import { accruedPreferred } from '../src/hurdle.ts'
 import { largestRemainder } from '../src/rounding.ts'
-import { WaterlineError, normalizeTerms, run, type Terms } from '../src/index.ts'
+import { WalterError, normalizeTerms, run, type Terms } from '../src/index.ts'
 
 const d = (s: string) => new D(s)
 const terms = (tiers: any[], extra: Partial<Terms> = {}): Terms => ({
-  waterline: '0.1',
+  walter: '0.1',
   fund: { id: 'example-fund-i', currency: 'USD' },
   partners: [
     { id: 'gp', role: 'gp', commitment: '0' },
@@ -18,7 +18,7 @@ const terms = (tiers: any[], extra: Partial<Terms> = {}): Terms => ({
   ...extra,
 })
 const refuses = (code: string, fn: () => unknown) =>
-  assert.throws(fn, (e: unknown) => e instanceof WaterlineError && e.code === code)
+  assert.throws(fn, (e: unknown) => e instanceof WalterError && e.code === code)
 
 test('30/360 moves the 31st to the 30th, and the end date only when the start is the 30th or 31st', () => {
   assert.equal(yearFraction('2025-01-31', '2025-07-31', '30/360').toString(), '0.5')

@@ -1,6 +1,6 @@
 {
   "id": "recycling-never-distributed",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Recycled proceeds never distributed",
   "description": "100 of a 600 exit is recycled and kept in the fund; only 500 enters the waterfall. Called capital stays 1,000. On an unreturned 8% pref the second year accrues on the 500 left and the 80 unpaid: 126.40.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "catch-up-resumes",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A catch-up finishes in the next distribution",
   "description": "The first distribution leaves the GP 10 into a 20 catch-up; the second finishes it and splits the rest 72/18.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, resume-mid-catch-up",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

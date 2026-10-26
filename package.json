@@ -1,7 +1,7 @@
 {
-  "name": "waterline-repo",
+  "name": "walter-repo",
   "private": true,
-  "description": "Waterline: an open spec for fund economics, with test vectors and a reference engine.",
+  "description": "Walter: an open spec for fund economics, with test vectors and a reference engine.",
   "license": "Apache-2.0",
   "type": "module",
   "workspaces": [
@@ -10,7 +10,7 @@
   "scripts": {
     "test": "node --test engine/test/*.test.ts runner/*.test.ts",
     "typecheck": "tsc -p tsconfig.json",
-    "vectors": "node runner/run.ts --engine ./engine/src/index.ts --name \"Waterline reference engine\" --out results/reference.json",
+    "vectors": "node runner/run.ts --engine ./engine/src/index.ts --name \"Walter reference engine\" --out results/reference.json",
     "compat": "node runner/compat.ts"
   },
   "engines": {

@@ -1,6 +1,6 @@
 {
   "id": "split-tiered-irr-catch-up",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Carry steps up at a 15% IRR, with a second catch-up",
   "description": "8% compounding pref, full catch-up to 20%, 80/20 until the LPs reach a 15% IRR, then a catch-up to 25% of profit and 75/25. The test suite checks the LPs' IRR at the first step is 15%.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "reference-engine",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "clawback-unreturned",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "The same flows on an unreturned pref",
   "description": "On the unreturned base the hurdle stops growing on capital once it comes back, so the LPs clear it and the GP is entitled to 7.00 in the end, 1.68 of it paid in year two.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "reference-engine, checked against the engine comparison",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "pref-unreturned-simple",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Unreturned base, simple",
   "description": "Half the capital comes back after a year; the second year accrues on the other half and unpaid pref never accrues: 80 + 40 = 120.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, unreturned-simple",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

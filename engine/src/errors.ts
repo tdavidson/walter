@@ -10,15 +10,15 @@ export type ErrorCode =
   | 'recycle-after-end'
   | 'recycle-exceeds-proceeds'
 
-export class WaterlineError extends Error {
+export class WalterError extends Error {
   readonly code: ErrorCode
   constructor(code: ErrorCode, message: string) {
     super(message)
     this.code = code
-    this.name = 'WaterlineError'
+    this.name = 'WalterError'
   }
 }
 
 export const fail = (code: ErrorCode, message: string): never => {
-  throw new WaterlineError(code, message)
+  throw new WalterError(code, message)
 }

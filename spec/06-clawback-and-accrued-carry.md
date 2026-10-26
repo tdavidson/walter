@@ -1,6 +1,6 @@
 # Clawback and accrued carry
 
-Return of capital owes only capital contributed so far. That's the reading Waterline takes, and it
+Return of capital owes only capital contributed so far. That's the reading Walter takes, and it
 means a strong early exit can pay the GP carry it isn't entitled to over the fund's life: the
 capital called later, and the pref on it, still have to come back first. Clawback is how the LPA
 settles that, so it's in 0.1 rather than left for later.

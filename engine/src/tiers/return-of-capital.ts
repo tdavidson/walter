@@ -3,7 +3,7 @@
 //   "First, 100% to the Limited Partners until they have received cumulative distributions equal to
 //    their aggregate Capital Contributions."
 //
-// Owed back is the capital contributed so far (Waterline 0.1 decision: never capital still to be
+// Owed back is the capital contributed so far (Walter 0.1 decision: never capital still to be
 // called), or for a deal-by-deal waterfall the capital in deals realized so far. The fund-end view
 // used for clawback owes all capital the fund ever called.
 

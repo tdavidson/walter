@@ -1,6 +1,6 @@
 {
   "id": "recycling-deemed-unreturned",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Deemed distributed and recontributed, unreturned pref",
   "description": "The same 100 deemed paid out and called back the same day. Capital owed and returned both rise by 100, which nets to nothing on an unreturned pref: the split matches the never-distributed vector exactly.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

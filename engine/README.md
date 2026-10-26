@@ -1,9 +1,9 @@
-# @hemrock/waterline
+# @hemrock/walter
 
-The reference engine for [Waterline](../README.md), the open spec for venture fund economics.
+The reference engine for [Walter](../README.md), the open spec for venture fund economics.
 
 ```ts
-import { run } from '@hemrock/waterline'
+import { run } from '@hemrock/walter'
 
 const result = run(terms, flows)
 ```
@@ -11,7 +11,7 @@ const result = run(terms, flows)
 `run` takes a terms document and a list of flows, both as plain JSON with decimal strings, and
 returns allocations by date, tier and partner, recontributions and recycling, the clawback,
 carry accrued at each NAV, management fees by period, and each partner's totals. It throws a
-`WaterlineError` with a stable `code` when the terms or flows can't be computed.
+`WalterError` with a stable `code` when the terms or flows can't be computed.
 
 It's written to be read. Each tier is in its own file under `src/tiers/`, with the LPA wording it
 implements at the top, and every figure is computed in decimal (`decimal.js` at 40 significant

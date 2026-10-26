@@ -1,6 +1,6 @@
 {
   "id": "fees-offsets-carry-forward",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Fee offsets, with the excess carried forward",
   "description": "A 700,000 transaction fee at a 100% offset wipes out the first quarter's 500,000 and carries 200,000 forward; a 100,000 monitoring fee at 80% adds 80,000 in the second quarter, so it pays 220,000.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

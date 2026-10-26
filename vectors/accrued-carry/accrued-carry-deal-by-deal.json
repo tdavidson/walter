@@ -1,6 +1,6 @@
 {
   "id": "accrued-carry-deal-by-deal",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Deal-by-deal terms accrue the whole-fund figure",
   "description": "A liquidation realizes every deal, so on the fund-end view deal-by-deal accrues exactly what whole-fund does: 100.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, carryTarget american-equals-european",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

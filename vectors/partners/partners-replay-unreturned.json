@@ -1,6 +1,6 @@
 {
   "id": "partners-replay-unreturned",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "The same books on the unreturned base",
   "description": "The first 500 returned half the capital, so the second year accrues on 500 plus the first year's unpaid pref: 126.40 of pref and a 31.60 catch-up.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, unreturned-replay-then-split",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

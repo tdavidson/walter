@@ -1,6 +1,6 @@
 {
   "id": "recycling-over-cap",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A recycle over the cap is refused",
   "description": "A 20% cap on 1,000 of commitments allows 200. Recycling 150 and then 100 would reach 250.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "roc-called-to-date",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Only capital called so far comes back first",
   "description": "Called 50, 120 back two years later, called 50 more, 150 back three years after that; 8% compounding pref on unreturned capital, full catch-up, 80/20. The first distribution returns only the 50 called, so the GP is paid 14.00 of carry early and 20.00 later: 34.00, 20% of the 170 of profit. The fund-end view agrees, so there is no clawback.",
   "tags": [
@@ -11,7 +11,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

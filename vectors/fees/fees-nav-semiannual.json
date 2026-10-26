@@ -1,6 +1,6 @@
 {
   "id": "fees-nav-semiannual",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "2% of NAV, semiannual",
   "description": "The fee is on the last NAV at or before each half's first day, the fee-bearing share of it: 0.01 × 80,000,000 × 100/102 = 784,313.73, then 0.01 × 90,000,000 × 100/102 = 882,352.94.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

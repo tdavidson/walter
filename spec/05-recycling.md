@@ -50,5 +50,5 @@ and four refusals.
 ## Recallable distributions
 
 Recallable distributions are the same idea after the fact: cash goes out through the waterfall and
-comes back as a contribution. In Waterline that's an ordinary distribution followed by a
+comes back as a contribution. In Walter that's an ordinary distribution followed by a
 `contribution` marked `recalled: true`.

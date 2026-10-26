@@ -1,6 +1,6 @@
 {
   "id": "recycling-after-end",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A recycle after the end date is refused",
   "description": "Recycling ends 31 December 2026; proceeds received in 2027 cannot be recycled.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "rounding-three-way-split",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Largest remainder across three equal partners",
   "description": "100.00 to three LPs with equal capital: 33.34, 33.33, 33.33. The extra cent goes to the first partner listed.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

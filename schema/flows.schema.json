@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/waterline/0.1/flows.schema.json",
-  "title": "Waterline flows",
+  "$id": "https://hemrock.com/walter/0.1/flows.schema.json",
+  "title": "Walter flows",
   "description": "The dated cash flows and events a fund's terms are applied to.",
   "type": "array",
   "items": {

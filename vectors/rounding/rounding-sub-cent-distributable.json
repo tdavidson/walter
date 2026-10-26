@@ -1,6 +1,6 @@
 {
   "id": "rounding-sub-cent-distributable",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "The distributable is rounded first",
   "description": "100.004 is rounded to 100.00 before it enters the waterfall.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, sub-cent-distributable",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

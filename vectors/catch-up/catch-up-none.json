@@ -1,6 +1,6 @@
 {
   "id": "catch-up-none",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "No catch-up",
   "description": "No catch-up tier: after the pref, the 420 left splits 336/84.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, no-catch-up",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

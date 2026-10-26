@@ -1,15 +1,15 @@
-# Waterline
+# Walter
 
 An open spec for venture fund economics: how a distribution is split between the LPs and the GP,
 what the preferred return is on a given day, how recycled proceeds are booked, what the GP gives
 back at fund end, and what the management fee comes to. It comes with test vectors and a
-reference engine, so a claim like "supports Waterline 0.1" is something anyone can check.
+reference engine, so a claim like "supports Walter 0.1" is something anyone can check.
 
 ```
 spec/      the spec, one page per section; start at spec/00-overview.md
 schema/    JSON Schemas for terms, flows, results and vectors (draft 2020-12)
 vectors/   71 test vectors, one JSON file each, grouped by what they test
-engine/    the TypeScript reference engine, @hemrock/waterline
+engine/    the TypeScript reference engine, @hemrock/walter
 runner/    runs any engine against the vectors and builds COMPATIBILITY.md
 results/   each engine's results.json
 ```
@@ -19,7 +19,7 @@ results/   each engine's results.json
 Every fund engine has to decide what its LPA means, and LPAs are ambiguous in a handful of places
 that move real money: which capital comes back before carry, whether the pref accrues on capital
 contributed or capital still out, what a 50% catch-up is a catch-up to. Engines that read those
-differently all look right on their own. Waterline gives each ambiguity a term with a name and
+differently all look right on their own. Walter gives each ambiguity a term with a name and
 ships a vector for every value, so a reading is a choice you make in the terms and not a default
 hidden in someone's code.
 
@@ -30,7 +30,7 @@ reference engine exists to show the vectors are consistent with each other.
 
 ```json
 {
-  "waterline": "0.1",
+  "walter": "0.1",
   "fund": { "id": "example-fund-i", "currency": "USD" },
   "partners": [
     { "id": "gp", "role": "gp", "commitment": "2000000" },
@@ -56,7 +56,7 @@ accrued at each NAV, and the management fee by period.
 ## Using the reference engine
 
 ```ts
-import { run } from '@hemrock/waterline'
+import { run } from '@hemrock/walter'
 
 const result = run(terms, flows)
 result.allocations // [{ date, tier, partner, amount }, ...]

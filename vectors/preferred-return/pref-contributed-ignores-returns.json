@@ -1,6 +1,6 @@
 {
   "id": "pref-contributed-ignores-returns",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Contributed base keeps accruing after capital returns",
   "description": "All 1,000 comes back after a year, but on the contributed base the hurdle accrues on gross contributions: five years (1,827 days) gives 469.95.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, no-reduction-for-returns",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "recycling-cap-on-fees",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A cap measured on management fees paid",
   "description": "The cap is 100% of management fees paid. The LP has paid 50 of fees, so recycling 60 is refused.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

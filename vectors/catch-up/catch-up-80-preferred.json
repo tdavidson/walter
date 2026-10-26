@@ -1,6 +1,6 @@
 {
   "id": "catch-up-80-preferred",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "80% catch-up, measured on the pref",
   "description": "gpShare 0.8, measure preferred: 25 of flow gives the GP its 20 (a quarter of the 80 pref) and the LPs 5, then 80/20 on the rest.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, partial-catch-up-80",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

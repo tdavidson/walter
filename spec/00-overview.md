@@ -1,6 +1,6 @@
-# Waterline 0.1
+# Walter 0.1
 
-Waterline is an open, machine-readable description of how a venture fund's economics work: who
+Walter is an open, machine-readable description of how a venture fund's economics work: who
 gets which dollar of a distribution, what the preferred return is on a given day, when the GP
 catches up, how recycled proceeds are booked, what the GP gives back at the end, and what the
 management fee comes to. It has three parts, and they're meant to be read together.
@@ -15,7 +15,7 @@ management fee comes to. It has three parts, and they're meant to be read togeth
 The reason this exists is that there's no oracle for fund economics. Hemrock has three engines that
 compute waterfalls, and on the same plain terms they agree. They part ways on catch-up size, on
 which pref base applies, and on which capital comes back first, and none of them was wrong by its
-own lights. Each was reading an ambiguous term one way. Waterline turns each of those ambiguities
+own lights. Each was reading an ambiguous term one way. Walter turns each of those ambiguities
 into a term with a name and a vector for every value, so nothing gets quietly decided.
 
 ## Scope
@@ -59,7 +59,7 @@ right until the disagreement is fixed in a pull request that says which one was 
 
 ## Versioning
 
-The terms, flows and result documents each carry `"waterline": "0.1"`. A change that alters an
+The terms, flows and result documents each carry `"walter": "0.1"`. A change that alters an
 expected answer, or the meaning of an existing term, is a new minor version until 1.0. Adding a
 term whose absence keeps today's behaviour is not.
 

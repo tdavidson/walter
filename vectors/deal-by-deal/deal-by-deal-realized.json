@@ -1,6 +1,6 @@
 {
   "id": "deal-by-deal-realized",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Deal by deal returns realized capital",
   "description": "A 200 deal is written off, then a 400 deal sells for 1,000. The first tier owes the 600 in realized deals, not the 1,000 contributed, so the GP is paid carry now: 80, 20% of the 400 of realized profit. The pref is computed exactly (68.9644…) and only the lines are rounded, so the LP lines differ by a cent from rounding each tier first.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, american-realized-deals",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

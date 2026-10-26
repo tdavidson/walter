@@ -1,6 +1,6 @@
 {
   "id": "pref-30-360-month-end",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "30/360 treats the 31st as the 30th",
   "description": "31 January to 31 July is 180 days under 30/360 (both ends become the 30th), half a year: 1000 × 0.08 × 0.5 = 40.00 simple. ACT/365 would give 181 days.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "split-tiered-multiple",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Carry steps up at a 2× multiple",
   "description": "20% until the LPs have 2× their capital, then 30%. On 1,000 and 4,000 back: 1,250 of flow at 20% takes the LPs to 2,000, and the last 1,750 splits 1,225/525.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

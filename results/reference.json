@@ -1,7 +1,7 @@
 {
-  "waterline": "0.1",
+  "walter": "0.1",
   "engine": {
-    "name": "Waterline reference engine",
+    "name": "Walter reference engine",
     "version": "0.1.0"
   },
   "summary": {

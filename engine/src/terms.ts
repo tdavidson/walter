@@ -66,7 +66,7 @@ const fraction = (v: string | undefined, what: string, opts: { allowOne?: boolea
 }
 
 export function normalizeTerms(terms: Terms): NormalizedTerms {
-  if (!terms || terms.waterline !== '0.1') fail('invalid-terms', 'terms.waterline must be "0.1"')
+  if (!terms || terms.walter !== '0.1') fail('invalid-terms', 'terms.walter must be "0.1"')
   const minorUnits = terms.fund?.minorUnits ?? 2
   if (!Array.isArray(terms.partners) || terms.partners.length === 0) fail('invalid-terms', 'at least one partner is required')
 

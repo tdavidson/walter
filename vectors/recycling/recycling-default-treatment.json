@@ -1,6 +1,6 @@
 {
   "id": "recycling-default-treatment",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A recycle with no treatment uses the fund default",
   "description": "The fund's default is deemed, and the recycle names none, so it is deemed.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "recycling-not-permitted",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "No recycling term, no recycling",
   "description": "The terms have no recycling clause, so a recycle on a distribution is refused.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

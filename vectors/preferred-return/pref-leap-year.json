@@ -1,6 +1,6 @@
 {
   "id": "pref-leap-year",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A leap year is 366/365 of a year",
   "description": "2024 has 366 days, so under ACT/365 a calendar year accrues 1000 × (1.08^(366/365) − 1) = 80.23.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, leap-year",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

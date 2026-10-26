@@ -1,6 +1,6 @@
 {
   "id": "pref-multiple",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A flat multiple hurdle",
   "description": "A 1.5× hurdle: the LPs get 1,500 on 1,000 before carry. Then a 125 catch-up and 375 split 300/75, so the GP holds 200 of the 1,000 of profit.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

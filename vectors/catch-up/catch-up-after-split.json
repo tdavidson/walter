@@ -1,6 +1,6 @@
 {
   "id": "catch-up-after-split",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "The hurdle grows after the split",
   "description": "Simple 8% on 30/360: 80 of pref at one year and 120 at eighteen months. The first distribution reaches the split; the second pays the extra 40 of pref, catches the GP up 10 (back to 20% of profit) and splits the rest.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, catch-up-after-split",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

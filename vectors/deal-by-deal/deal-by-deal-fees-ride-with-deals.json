@@ -1,6 +1,6 @@
 {
   "id": "deal-by-deal-fees-ride-with-deals",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Fees and expenses ride with the deals by cost",
   "description": "The LP contributes 900 for two 450 deals and 100 for fees. Selling one deal for 900 realizes 450 of cost plus its 50 share of the fees: 500 of capital comes back before carry, and the 400 above it splits 320/80.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

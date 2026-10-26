@@ -1,6 +1,6 @@
 {
   "id": "fees-organizational-expense-cap",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Organizational expenses over the cap reduce the fee",
   "description": "650,000 of organizational expenses against a 500,000 cap: the 150,000 over it comes off the first quarter's fee.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

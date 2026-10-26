@@ -1,6 +1,6 @@
 {
   "id": "catch-up-80-profit",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "80% catch-up, measured on profit",
   "description": "The same terms with measure profit: the catch-up runs until the GP has 20% of all profit, F = 0.2 × 80 ÷ (0.8 − 0.2) = 26.67 of flow. The GP ends with exactly 100 of the 500 of profit, against 99 under measure preferred.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

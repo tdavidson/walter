@@ -1,6 +1,6 @@
 {
   "id": "fees-stub-period",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A last quarter cut short",
   "description": "The fee ends on 15 August, 45 days into a 92-day quarter: 500,000 × 45/92 = 244,565.22.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

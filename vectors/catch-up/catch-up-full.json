@@ -1,6 +1,6 @@
 {
   "id": "catch-up-full",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "All four tiers, full catch-up",
   "description": "1,000 of capital, 80 of pref, a 20 catch-up (the GP reaches 20% of 100), then 80/20. The GP ends with 100, 20% of the 500 of profit.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, european-full-catch-up",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

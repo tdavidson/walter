@@ -1,6 +1,6 @@
 {
   "id": "partners-gp-commit-carry-free",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "The GP commit pays no carry",
   "description": "The GP commits 20 of 1,000 and bears no carry. It takes its 2% slice of 1,500 (20 back, 10 of profit) outside the waterfall; the other 1,470 runs the tiers on the LP's 980.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

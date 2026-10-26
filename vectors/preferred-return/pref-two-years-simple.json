@@ -1,6 +1,6 @@
 {
   "id": "pref-two-years-simple",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Two years, simple",
   "description": "1000 × 0.08 × 2 = 160.00.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, two-years-simple",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

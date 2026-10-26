@@ -1,6 +1,6 @@
 {
   "id": "catch-up-share-below-carry-profit-invalid",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A profit catch-up that can never finish is refused",
   "description": "gpShare 0.1 with a 0.20 target under measure profit: the GP's share of profit would fall, not rise, so the terms are invalid.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

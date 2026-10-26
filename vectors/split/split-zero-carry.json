@@ -1,6 +1,6 @@
 {
   "id": "split-zero-carry",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "No carry",
   "description": "A split with gpShare 0: the LPs get everything, and no carry recipient is needed.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, zero-carry",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

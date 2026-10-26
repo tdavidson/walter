@@ -1,6 +1,6 @@
 {
   "id": "pref-two-years-compound",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Two years, compounding",
   "description": "730 days is exactly two years under ACT/365: 1000 × (1.08² − 1) = 166.40.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, two-years-compound",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

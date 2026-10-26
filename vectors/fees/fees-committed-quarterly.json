@@ -1,6 +1,6 @@
 {
   "id": "fees-committed-quarterly",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "2% of commitments, quarterly",
   "description": "The LPs' 100,000,000 of commitments at 2% a year is 500,000 a quarter. The GP's commitment pays no fee.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

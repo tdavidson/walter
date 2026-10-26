@@ -1,6 +1,6 @@
 {
   "id": "accrued-carry-unreturned",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Accrued carry on the unreturned base",
   "description": "All 1,000 came back after a year, so the hurdle at two years is 86.40, not 166.40, and the GP catches up on the 13.60 of NAV left above it.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, carryTarget european-unreturned",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

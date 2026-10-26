@@ -1,6 +1,6 @@
 {
   "id": "accrued-carry-below-hurdle",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "No carry accrued inside the hurdle",
   "description": "NAV 1,070 does not clear the 80 of pref, so nothing accrues.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, carryTarget european-below-hurdle",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

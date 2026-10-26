@@ -1,6 +1,6 @@
 {
   "id": "pref-per-contribution-dates",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Each contribution accrues from its own date",
   "description": "1,000 a year before, 500 on 2 July, 700 on the distribution date. The last is capital to return but accrues nothing yet: 80.00 + 19.67 = 99.67.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, per-contribution-dates",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

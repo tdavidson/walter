@@ -1,6 +1,6 @@
 {
   "id": "partners-replay-then-split",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "An earlier distribution is part of the state",
   "description": "A first 500 is all capital. A year later 1,000 finishes capital, pays two years of pref on the 1,000 contributed (166.40), catches up 41.60 and splits.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, replay-then-split",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "roc-excludes-fees",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Fees left out of capital to return",
   "description": "The same flows with returnOfCapital.includes set to investments only: 900 is returned and the 100 above it splits 80/20.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

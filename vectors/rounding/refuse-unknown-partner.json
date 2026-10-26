@@ -1,6 +1,6 @@
 {
   "id": "refuse-unknown-partner",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A contribution from someone not in the terms is refused",
   "description": "Every contribution names a partner listed in the terms.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

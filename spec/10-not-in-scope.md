@@ -24,7 +24,7 @@ these, and they're the first thing 0.2 should add.
 
 ILPA's Reporting Template and Performance Template ask for carried interest accrued, earned and
 paid in the capital account statement, a gross-to-net fee reconciliation with offsets by category,
-and IRR with and without the subscription line. Waterline's results (allocations by tier,
+and IRR with and without the subscription line. Walter's results (allocations by tier,
 `accruedCarry`, fee periods with offsets) should map onto those rows line by line, and that
 mapping should be published as a table here once it's been checked against the templates
 themselves.

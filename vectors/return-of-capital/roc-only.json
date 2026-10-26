@@ -1,6 +1,6 @@
 {
   "id": "roc-only",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Less than capital is all return of capital",
   "description": "A distribution smaller than the capital contributed goes entirely to return of capital.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, roc-only",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

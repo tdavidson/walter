@@ -1,6 +1,6 @@
 {
   "id": "pref-one-year-simple",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "One year, simple",
   "description": "The same year at simple interest: also 80.00.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, one-year-simple",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

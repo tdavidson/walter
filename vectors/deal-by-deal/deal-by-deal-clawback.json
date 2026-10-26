@@ -1,6 +1,6 @@
 {
   "id": "deal-by-deal-clawback",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Deal-by-deal carry clawed back at fund end",
   "description": "Two 500 deals. The first sells for 1,000 and pays the GP 100 of carry on its own gain. The second is written off. On the fund-end view the fund only got its 1,000 back, so the GP returns the 100.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

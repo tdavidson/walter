@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/waterline/0.1/vector.schema.json",
-  "title": "Waterline test vector",
+  "$id": "https://hemrock.com/walter/0.1/vector.schema.json",
+  "title": "Walter test vector",
   "description": "One behaviour: terms, flows, and the answer an engine must give.",
   "type": "object",
   "required": [
     "id",
-    "waterline",
+    "walter",
     "title",
     "description",
     "tags",
@@ -21,7 +21,7 @@
       "type": "string",
       "pattern": "^[a-z0-9-]+$"
     },
-    "waterline": {
+    "walter": {
       "const": "0.1"
     },
     "title": {

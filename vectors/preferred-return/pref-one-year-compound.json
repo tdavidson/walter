@@ -1,6 +1,6 @@
 {
   "id": "pref-one-year-compound",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "One year, compounding",
   "description": "One contribution, 365 days, 8% compounding: 80.00 of pref.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, one-year-compound",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

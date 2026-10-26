@@ -1,6 +1,6 @@
 {
   "id": "recycling-deemed-contributed",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Deemed distributed and recontributed, contributed pref",
   "description": "On a contributed-capital pref the recontributed 100 is new capital and accrues from its date: 1000 × 0.1664 + 100 × 0.08 = 174.40 of pref, against 166.40 had it never been distributed.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

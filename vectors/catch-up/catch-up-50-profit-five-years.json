@@ -1,6 +1,6 @@
 {
   "id": "catch-up-50-profit-five-years",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "50% catch-up over five years, measured on profit",
   "description": "100 called, 200 back five years later, 8% compounding: a 50/50 catch-up measured on profit ends with the GP at 20.00 of the 100 of profit.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "reference-engine, checked against the engine comparison",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

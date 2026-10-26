@@ -1,6 +1,6 @@
 {
   "id": "accrued-carry-straight",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Straight carry accrued at NAV",
   "description": "1,000 called, 100 back, NAV 1,400: 500 of profit at 20% is 100.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, carryTarget straight",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

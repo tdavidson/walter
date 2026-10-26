@@ -1,6 +1,6 @@
 {
   "id": "fees-step-down-invested",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A step-down to invested capital after the investment period",
   "description": "From the end of the investment period the fee is 1.5% of invested capital, the fee-bearing share of it: 0.015 ÷ 4 × 40,000,000 × 100/102 = 147,058.82 a quarter.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD",

@@ -25,7 +25,7 @@ A vector is one JSON file in `vectors/<group>/<id>.json`, validated by
 ```json
 {
   "id": "pref-30-360-simple-full-catch-up",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "30/360, simple pref, full catch-up",
   "description": "100 called, 200 back five years later ...",
   "tags": ["pref-simple", "day-count-30-360", "catch-up-full"],

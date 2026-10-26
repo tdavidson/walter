@@ -1,6 +1,6 @@
 {
   "id": "roc-includes-fees",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Fees are capital to return by default",
   "description": "900 called for investments and 100 for fees. By default both are returned before carry, so 1,000 back is all return of capital.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "pref-unreturned-capital-back",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Unreturned base: only the unpaid pref keeps compounding",
   "description": "All capital comes back after a year, leaving 80 of unpaid pref, which compounds a second year: 86.40.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, unreturned-capital-back",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

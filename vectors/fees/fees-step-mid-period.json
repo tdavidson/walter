@@ -1,6 +1,6 @@
 {
   "id": "fees-step-mid-period",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A step-down in the middle of a quarter",
   "description": "A successor fund starts on 16 May and the rate drops to 1.5%. The quarter from 1 April (91 days) pays 45 days at 2% and 46 at 1.5%: 247,252.75 + 189,560.44 = 436,813.19.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

@@ -1,6 +1,6 @@
 {
   "id": "clawback-disabled",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "No clawback when the terms turn it off",
   "description": "The same flows with clawback disabled: the GP keeps the 1.68.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "hand-computed",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

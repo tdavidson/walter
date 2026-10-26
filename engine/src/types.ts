@@ -106,7 +106,7 @@ export interface Recycling {
 export type Treatment = 'never-distributed' | 'deemed'
 
 export interface Terms {
-  waterline: '0.1'
+  walter: '0.1'
   fund: {
     id: string
     currency: string
@@ -160,7 +160,7 @@ export interface Allocation {
 }
 
 export interface Result {
-  waterline: '0.1'
+  walter: '0.1'
   allocations: Allocation[]
   recontributions: { date: string; partner: string; amount: string }[]
   recycled: { date: string; amount: string; treatment: Treatment }[]

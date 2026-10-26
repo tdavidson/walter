@@ -3,7 +3,7 @@
 
 export interface Vector {
   id: string
-  waterline: string
+  walter: string
   title: string
   description: string
   tags: string[]

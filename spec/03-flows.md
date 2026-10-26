@@ -2,7 +2,7 @@
 
 The flows are a JSON array, validated by [`schema/flows.schema.json`](../schema/flows.schema.json).
 The spec takes them as given. Nothing about investment pacing or exit assumptions belongs here: a
-forecasting tool decides the flows, and Waterline says who gets what from them.
+forecasting tool decides the flows, and Walter says who gets what from them.
 
 | Type | Fields | Meaning |
 | --- | --- | --- |

@@ -1,6 +1,6 @@
 {
   "id": "partners-two-recipients",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Carry split between two recipients",
   "description": "Two LPs share the LP side by capital (60/40); carry goes 33.3/66.7 to two recipients.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, two-recipients",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

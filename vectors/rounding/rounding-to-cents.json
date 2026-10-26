@@ -1,6 +1,6 @@
 {
   "id": "rounding-to-cents",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Partner totals tie to the cent",
   "description": "133.33 on 100 of capital with a 1.1 hurdle: the GP's exact share is 6.666 and the LP's 126.664. Rounding partner totals first gives 6.67 and 126.66, and the GP's lines round to that total.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, rounding-to-cents",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

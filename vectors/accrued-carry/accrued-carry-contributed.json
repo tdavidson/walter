@@ -1,6 +1,6 @@
 {
   "id": "accrued-carry-contributed",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "The same books on the contributed base",
   "description": "On the contributed base the hurdle is 166.40 and the 100 of profit does not clear it: nothing accrues.",
   "tags": [
@@ -9,7 +9,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, carryTarget european-contributed-same-books",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

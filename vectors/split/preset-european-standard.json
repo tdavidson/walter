@@ -1,6 +1,6 @@
 {
   "id": "preset-european-standard",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "The european-standard preset",
   "description": "The preset expands to return of capital, an 8% pref compounding on unreturned capital, a full catch-up and 80/20. It gives the same answer as the four tiers written out.",
   "tags": [
@@ -10,7 +10,7 @@
   ],
   "provenance": "reference-engine",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

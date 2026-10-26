@@ -1,6 +1,6 @@
 {
   "id": "split-straight",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Straight carry: capital, then the split",
   "description": "No hurdle and no catch-up: 1,000 back, then 500 split 400/100.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, straight-shape",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

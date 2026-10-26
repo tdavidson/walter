@@ -1,6 +1,6 @@
 {
   "id": "accrued-carry-whole-fund",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "Carry accrued at NAV",
   "description": "1,000 called, NAV 1,500 a year later, 8% pref, full catch-up: liquidating at NAV would pay the GP 100.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "ported: Portfolio spec v2, carryTarget european",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"

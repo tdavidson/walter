@@ -1,15 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/waterline/0.1/result.schema.json",
-  "title": "Waterline result",
+  "$id": "https://hemrock.com/walter/0.1/result.schema.json",
+  "title": "Walter result",
   "description": "What an engine returns for a set of terms and flows.",
   "type": "object",
   "required": [
-    "waterline",
+    "walter",
     "allocations"
   ],
   "properties": {
-    "waterline": {
+    "walter": {
       "const": "0.1"
     },
     "allocations": {

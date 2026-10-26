@@ -4,7 +4,7 @@ One JSON document per fund, validated by [`schema/terms.schema.json`](../schema/
 
 ```json
 {
-  "waterline": "0.1",
+  "walter": "0.1",
   "fund": { "id": "example-fund-i", "currency": "USD", "investmentPeriodEnd": "2030-06-30" },
   "partners": [
     { "id": "gp", "role": "gp", "commitment": "2000000" },

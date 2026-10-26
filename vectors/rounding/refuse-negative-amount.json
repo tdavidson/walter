@@ -1,6 +1,6 @@
 {
   "id": "refuse-negative-amount",
-  "waterline": "0.1",
+  "walter": "0.1",
   "title": "A negative amount is refused",
   "description": "Amounts are never negative; a distribution of -50 is an invalid flow.",
   "tags": [
@@ -8,7 +8,7 @@
   ],
   "provenance": "adapted: Portfolio spec v2, negative-distributable (which distributes nothing instead)",
   "terms": {
-    "waterline": "0.1",
+    "walter": "0.1",
     "fund": {
       "id": "example-fund-i",
       "currency": "USD"
