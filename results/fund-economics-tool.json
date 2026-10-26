@@ -6,9 +6,9 @@
   },
   "summary": {
     "vectors": 88,
-    "pass": 87,
+    "pass": 88,
     "fail": 0,
-    "unsupported": 1
+    "unsupported": 0
   },
   "results": [
     {
@@ -664,10 +664,7 @@
         "reporting",
         "reporting-carry"
       ],
-      "status": "unsupported",
-      "problems": [
-        "a carry recipient that also bears carry (gp)"
-      ]
+      "status": "pass"
     },
     {
       "id": "reporting-new-kinds-need-0-3",
