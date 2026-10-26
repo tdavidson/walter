@@ -32,9 +32,14 @@ Known differences:
 - The fund engine has no clawback: carry paid early shows as accrued against paid on the GP panel.
   Its vectors for runWaterfall state, preferredTarget and carryTarget are function-level; the ones
   ported here were rewritten as terms and flows that produce the same state.
-- The fund engine has no LP classes. A partner's side-letter fee rate (`partner_allocation_terms`,
-  `rate_override` on the management fee) is a class with its own fee steps, one per rate. A
-  partner with its own carry, pref or first-loss position has no equivalent yet.
+- The fund engine keeps every LP, so it takes waterfall terms per LP instead of classes: an LP's
+  own carry terms and a subordinated flag (`LpWaterfallTerms`). LPs on identical terms run as one
+  group (`groupLpsByTerms`), which is a Walter class, and the conformance adapter maps each
+  class's partners onto them. A class's fee rates are a fee group (`feeSchedule` `groups`). The
+  app's side-letter fee rate (`partner_allocation_terms`, `rate_override`) is one too: each
+  override rate replaces the schedule's on every step that charges a fee, so a lower rate lowers
+  the fund's fee rather than moving it onto the other partners. Nothing in the app sets per-LP
+  waterfall terms yet.
 
 ## The fund economics tool
 
@@ -63,13 +68,12 @@ Known differences:
   so the two disagree on those terms until one of them changes.
 - LP classes (`features.lpClasses`) map onto `classes`, with differences below.
 
-LP classes in the tool (as of October 2026) differ from 0.2 in three ways. The tool splits the
-fund's LP totals across classes after the fact instead of running each class's waterfall, so a
-class's pref and catch-up overrides are stored but don't change its distributions. Its first-loss
-class gets back at most its capital, and its share of profit goes to the other classes; in Walter
-it shares profit pro rata once repaid. And a class's fee is its rate on its commitment over the
-fee years, without the fund's step-downs. Each is something the tool would change to pass the
-`classes` vectors.
+The engine runs each class's own waterfall (`runClassWaterfalls`) and a class's own fee steps,
+and passes the `classes` vectors. The tool's quarterly forecast runs the same class waterfalls
+whenever a class has terms of its own (a waterfall override or first loss); classes on the fund's
+terms keep the fund waterfall split by commitment, which gives the same answer. A class's fee
+rate follows the fund's step-downs in proportion, and the LP fee total is the sum of the classes'.
+The Excel workbook doesn't model class waterfalls or class fee rates yet.
 
 ## Portfolio forecast
 
