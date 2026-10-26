@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/walter/0.1/vector.schema.json",
+  "$id": "https://hemrock.com/walter/0.2/vector.schema.json",
   "title": "Walter test vector",
   "description": "One behaviour: terms, flows, and the answer an engine must give.",
   "type": "object",
@@ -22,7 +22,10 @@
       "pattern": "^[a-z0-9-]+$"
     },
     "walter": {
-      "const": "0.1"
+      "enum": [
+        "0.1",
+        "0.2"
+      ]
     },
     "title": {
       "type": "string"
@@ -167,6 +170,14 @@
             }
           }
         },
+        "feesByPartner": {
+          "type": "object",
+          "description": "Each fee-bearing partner's share of the net management fee over the whole schedule.",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^-?\\d+(\\.\\d+)?$"
+          }
+        },
         "recontributions": {
           "type": "array",
           "items": {
@@ -197,6 +208,7 @@
             "invalid-terms",
             "invalid-flow",
             "unknown-partner",
+            "unknown-class",
             "no-carry-recipient",
             "recycling-not-permitted",
             "recycle-over-cap",

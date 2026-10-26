@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/walter/0.1/result.schema.json",
+  "$id": "https://hemrock.com/walter/0.2/result.schema.json",
   "title": "Walter result",
   "description": "What an engine returns for a set of terms and flows.",
   "type": "object",
@@ -10,7 +10,7 @@
   ],
   "properties": {
     "walter": {
-      "const": "0.1"
+      "enum": ["0.1", "0.2"]
     },
     "allocations": {
       "type": "array",

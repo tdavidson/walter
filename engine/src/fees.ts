@@ -11,12 +11,16 @@
 // its days over the period's days. Offsets earned in a period reduce that period's fee, never below
 // zero, and what is left carries forward. Nothing here is rounded until the period's figures are
 // final.
+//
+// A class with rates of its own (0.2) pays them on its own partners' basis: their commitments, or
+// their commitments' share of invested capital or NAV. The fund's frequency, dates, offsets and
+// expense cap apply to every class, and an offset reduces each class's fee in proportion to it.
 
 import { D, ZERO, dec, money, pos, sum, type Dec } from './decimal.ts'
 import { addMonths, compareDates, daysBetween } from './dates.ts'
 import { fail } from './errors.ts'
 import { apportion } from './rounding.ts'
-import type { NormalizedTerms } from './terms.ts'
+import { FUND_CLASS, type NormalizedTerms } from './terms.ts'
 import type { FeeStep, Flow } from './types.ts'
 
 export interface FeePeriod {
@@ -44,16 +48,35 @@ export function managementFees(nt: NormalizedTerms, flows: Flow[]): { periods: F
     return e?.date
   }
   // Steps whose event never happened don't apply.
-  const steps = fee.schedule
-    .map((s) => ({ date: eventDate(s.from), rate: dec(s.rate), basis: s.basis }))
-    .filter((s): s is { date: string; rate: Dec; basis: FeeStep['basis'] } => s.date !== undefined)
-    .sort((a, b) => compareDates(a.date, b.date))
-  if (steps.length === 0) fail('invalid-terms', 'managementFee.schedule needs at least one step that applies')
+  const datedSteps = (schedule: FeeStep[], where: string) => {
+    const steps = schedule
+      .map((s) => ({ date: eventDate(s.from), rate: dec(s.rate), basis: s.basis }))
+      .filter((s): s is { date: string; rate: Dec; basis: FeeStep['basis'] } => s.date !== undefined)
+      .sort((a, b) => compareDates(a.date, b.date))
+    if (steps.length === 0) fail('invalid-terms', `${where} needs at least one step that applies`)
+    return steps
+  }
 
+  // The fee-bearing partners, in groups that share a rate schedule: a class with rates of its own is
+  // a group, and everyone else pays the fund's.
   const total = sum(nt.partners.map((p) => p.commitment))
   const feeBearing = nt.partners.filter((p) => p.feeBearing)
-  const feeCommit = sum(feeBearing.map((p) => p.commitment))
-  const share = total.isZero() ? ZERO : feeCommit.div(total)
+  const own = new Map(nt.classes.filter((c) => c.feeSchedule).map((c) => [c.id, c]))
+  const groupOf = (p: (typeof feeBearing)[number]) => (own.has(p.class) ? p.class : FUND_CLASS)
+  const groups = [FUND_CLASS, ...own.keys()]
+    .map((id) => {
+      const members = feeBearing.filter((p) => groupOf(p) === id)
+      const commit = sum(members.map((p) => p.commitment))
+      const schedule = id === FUND_CLASS ? fee.schedule : own.get(id)!.feeSchedule!
+      return {
+        members,
+        commit,
+        share: total.isZero() ? ZERO : commit.div(total),
+        steps: datedSteps(schedule, id === FUND_CLASS ? 'managementFee.schedule' : `class ${id}: managementFee.schedule`),
+      }
+    })
+    .filter((g) => g.members.length > 0)
+  const steps = groups.flatMap((g) => g.steps)
 
   const invested = (asOf: string): Dec => {
     let cost = ZERO
@@ -84,8 +107,8 @@ export function managementFees(nt: NormalizedTerms, flows: Flow[]): { periods: F
     for (const f of flows) if (f.type === 'nav' && compareDates(f.date, asOf) <= 0) last = dec(f.amount)
     return last
   }
-  const basisAmount = (basis: FeeStep['basis'], asOf: string): Dec =>
-    basis === 'commitments' ? feeCommit : (basis === 'invested' ? invested(asOf) : nav(asOf)).times(share)
+  const basisAmount = (g: (typeof groups)[number], basis: FeeStep['basis'], asOf: string): Dec =>
+    basis === 'commitments' ? g.commit : (basis === 'invested' ? invested(asOf) : nav(asOf)).times(g.share)
 
   const offsetRates = fee.offsets ?? {}
   const orgCap = fee.organizationalExpenseCap === undefined ? undefined : dec(fee.organizationalExpenseCap)
@@ -108,31 +131,45 @@ export function managementFees(nt: NormalizedTerms, flows: Flow[]): { periods: F
   let grossTotal = ZERO
   let netTotal = ZERO
   let carried = ZERO
+  // Each fee-bearing partner's net fee, exact: its group's share of the period's net, by commitment.
+  const owed = new Map<string, Dec>()
   for (let start = fee.start; !end || compareDates(start, end) < 0; start = addMonths(start, step)) {
     const periodEnd = addMonths(start, step)
     const stop = end && compareDates(end, periodEnd) < 0 ? end : periodEnd
     const days = new D(daysBetween(start, periodEnd))
     // Cut the period at every step date inside it.
     const cuts = [start, ...steps.map((s) => s.date).filter((d) => compareDates(d, start) > 0 && compareDates(d, stop) < 0), stop]
-    let gross = ZERO
-    for (let i = 0; i + 1 < cuts.length; i++) {
-      const s = [...steps].reverse().find((x) => compareDates(x.date, cuts[i]) <= 0)
-      if (!s) continue
-      const frac = new D(daysBetween(cuts[i], cuts[i + 1])).div(days)
-      gross = gross.plus(s.rate.div(perYear).times(basisAmount(s.basis, cuts[i])).times(frac))
-    }
-    gross = gross.toDecimalPlaces(mu, D.ROUND_HALF_EVEN)
+    const groupGross = groups.map((g) => {
+      let gg = ZERO
+      for (let i = 0; i + 1 < cuts.length; i++) {
+        const s = [...g.steps].reverse().find((x) => compareDates(x.date, cuts[i]) <= 0)
+        if (!s) continue
+        const frac = new D(daysBetween(cuts[i], cuts[i + 1])).div(days)
+        gg = gg.plus(s.rate.div(perYear).times(basisAmount(g, s.basis, cuts[i])).times(frac))
+      }
+      return gg
+    })
+    const exactGross = sum(groupGross)
+    const gross = exactGross.toDecimalPlaces(mu, D.ROUND_HALF_EVEN)
     const available = carried.plus(offsetsIn(start, stop))
     const offset = D.min(gross, available).toDecimalPlaces(mu, D.ROUND_HALF_EVEN)
     carried = available.minus(offset)
     const net = gross.minus(offset)
+    // The offset reduces each group's fee in proportion to it.
+    groups.forEach((g, k) => {
+      const groupNet = exactGross.isZero() ? ZERO : net.times(groupGross[k]).div(exactGross)
+      for (const p of g.members) {
+        const part = g.commit.isZero() ? ZERO : groupNet.times(p.commitment).div(g.commit)
+        owed.set(p.id, (owed.get(p.id) ?? ZERO).plus(part))
+      }
+    })
     grossTotal = grossTotal.plus(gross)
     netTotal = netTotal.plus(net)
     periods.push({ start, end: stop, gross: money(gross, mu), offset: money(offset, mu), net: money(net, mu) })
     if (!end && periods.length > 400) fail('invalid-terms', 'managementFee needs an end')
   }
 
-  const split = apportion(netTotal, feeBearing.map((p) => p.commitment), mu)
+  const split = apportion(netTotal, feeBearing.map((p) => owed.get(p.id) ?? ZERO), mu)
   const byPartner: Record<string, string> = {}
   feeBearing.forEach((p, i) => (byPartner[p.id] = money(split[i], mu)))
   return { periods, byPartner }

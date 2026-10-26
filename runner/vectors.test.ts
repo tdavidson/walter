@@ -13,8 +13,8 @@ import { loadVectors } from './vectors.ts'
 const schema = (name: string) => JSON.parse(readFileSync(new URL(`../schema/${name}.schema.json`, import.meta.url), 'utf8'))
 const ajv = new Ajv2020.default({ allErrors: true, strict: false })
 for (const s of ['terms', 'flows', 'result', 'vector']) ajv.addSchema(schema(s))
-const validVector = ajv.getSchema('https://hemrock.com/walter/0.1/vector.schema.json')!
-const validResult = ajv.getSchema('https://hemrock.com/walter/0.1/result.schema.json')!
+const validVector = ajv.getSchema('https://hemrock.com/walter/0.2/vector.schema.json')!
+const validResult = ajv.getSchema('https://hemrock.com/walter/0.2/result.schema.json')!
 
 const vectors = loadVectors()
 

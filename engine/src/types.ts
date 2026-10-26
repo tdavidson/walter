@@ -18,6 +18,23 @@ export interface Partner {
   carryBearing?: boolean
   /** Pays the management fee. Default: true for an LP, false for the GP. */
   feeBearing?: boolean
+  /** The LP class the partner belongs to (`classes`). Absent: the fund's own terms. */
+  class?: string
+}
+
+/**
+ * A class of LPs with terms of its own. Anything it leaves out is the fund's: a class with no
+ * `waterfall` runs the fund's tiers, and one with no `managementFee` pays the fund's rates.
+ */
+export interface LpClass {
+  id: string
+  /** Its own tiers or preset. Basis, what counts as capital and the carry recipients stay the fund's. */
+  waterfall?: { preset?: string; presetTerms?: { carry?: string; pref?: string }; tiers?: Tier[] }
+  /** Its own fee rates. The frequency, dates, offsets and expense cap stay the fund's. */
+  managementFee?: { schedule: FeeStep[] }
+  /** First loss: every senior class has its capital back before this class gets any. */
+  subordinated?: boolean
+  source?: Source
 }
 
 export interface ReturnOfCapitalTier {
@@ -107,7 +124,7 @@ export interface Recycling {
 export type Treatment = 'never-distributed' | 'deemed'
 
 export interface Terms {
-  walter: '0.1'
+  walter: '0.1' | '0.2'
   fund: {
     id: string
     currency: string
@@ -116,6 +133,8 @@ export interface Terms {
     investmentPeriodEnd?: string
   }
   partners: Partner[]
+  /** LP classes (0.2). Partners name theirs; a partner with none is on the fund's terms. */
+  classes?: LpClass[]
   waterfall: {
     basis?: 'whole-fund' | 'deal-by-deal'
     /** Which contributions count as capital to return (and to accrue the preferred return on). Default all. */
@@ -161,7 +180,7 @@ export interface Allocation {
 }
 
 export interface Result {
-  walter: '0.1'
+  walter: '0.1' | '0.2'
   allocations: Allocation[]
   recontributions: { date: string; partner: string; amount: string }[]
   recycled: { date: string; amount: string; treatment: Treatment }[]

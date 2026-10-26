@@ -2,11 +2,11 @@
   "walter": "0.1",
   "engine": {
     "name": "Walter reference engine",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "summary": {
-    "vectors": 71,
-    "pass": 71,
+    "vectors": 83,
+    "pass": 83,
     "fail": 0,
     "unsupported": 0
   },
@@ -176,6 +176,122 @@
       "tags": [
         "catch-up-partial",
         "catch-up-measure-preferred"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-clawback-by-class",
+      "file": "classes/classes-clawback-by-class.json",
+      "tags": [
+        "classes",
+        "clawback"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-different-carry",
+      "file": "classes/classes-different-carry.json",
+      "tags": [
+        "classes",
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-different-pref",
+      "file": "classes/classes-different-pref.json",
+      "tags": [
+        "classes",
+        "pref-compound",
+        "pref-unreturned",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-duplicate-id",
+      "file": "classes/classes-duplicate-id.json",
+      "tags": [
+        "classes",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-fee-discount-with-offset",
+      "file": "classes/classes-fee-discount-with-offset.json",
+      "tags": [
+        "classes",
+        "fees",
+        "fees-offsets",
+        "fees-committed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-fee-discount",
+      "file": "classes/classes-fee-discount.json",
+      "tags": [
+        "classes",
+        "fees",
+        "fees-committed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-first-loss-in-profit",
+      "file": "classes/classes-first-loss-in-profit.json",
+      "tags": [
+        "classes",
+        "first-loss",
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-first-loss-over-time",
+      "file": "classes/classes-first-loss-over-time.json",
+      "tags": [
+        "classes",
+        "first-loss",
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-first-loss-takes-the-loss",
+      "file": "classes/classes-first-loss-takes-the-loss.json",
+      "tags": [
+        "classes",
+        "first-loss",
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-need-0-2",
+      "file": "classes/classes-need-0-2.json",
+      "tags": [
+        "classes",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-one-class-matches-fund",
+      "file": "classes/classes-one-class-matches-fund.json",
+      "tags": [
+        "classes",
+        "gp-commit"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "classes-unknown-class",
+      "file": "classes/classes-unknown-class.json",
+      "tags": [
+        "classes",
+        "errors"
       ],
       "status": "pass"
     },

@@ -115,3 +115,20 @@ test('carry accrued is the entitlement less what has been paid', () => {
   ])
   assert.deepEqual(res.accruedCarry, [{ date: '2027-01-01', nav: '500.00', entitlement: '200.00', paid: '100.00', accrued: '100.00' }])
 })
+
+test('putting every partner in one class with no terms of its own changes no 0.1 answer', async () => {
+  const { loadVectors } = await import('../../runner/vectors.ts')
+  for (const v of loadVectors()) {
+    if (v.walter !== '0.1' || v.expected.error) continue
+    const terms = structuredClone(v.terms) as any
+    const plain = run(structuredClone(terms), structuredClone(v.flows) as any)
+    terms.walter = '0.2'
+    terms.classes = [{ id: 'everyone' }]
+    for (const p of terms.partners) p.class = 'everyone'
+    const classed = run(terms, structuredClone(v.flows) as any)
+    assert.deepEqual(classed.allocations, plain.allocations, v.id)
+    assert.deepEqual(classed.fees, plain.fees, v.id)
+    assert.deepEqual(classed.feesByPartner, plain.feesByPartner, v.id)
+    assert.deepEqual(classed.clawback, plain.clawback, v.id)
+  }
+})

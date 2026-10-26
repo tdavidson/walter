@@ -67,3 +67,9 @@ never below zero, and any offset left carries forward to the next period.
 
 `fees` lists each period's `start`, `end`, `gross`, `offset` and `net`. `feesByPartner` splits the
 total net fee across the fee-bearing partners by commitment, by largest remainder.
+
+## LP classes
+
+A class can have fee steps of its own, a side letter's lower rate for instance. How they combine
+with the fund's, and how offsets are shared between classes, is in
+[11-lp-classes.md](11-lp-classes.md).

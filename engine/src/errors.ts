@@ -4,6 +4,7 @@ export type ErrorCode =
   | 'invalid-terms'
   | 'invalid-flow'
   | 'unknown-partner'
+  | 'unknown-class'
   | 'no-carry-recipient'
   | 'recycling-not-permitted'
   | 'recycle-over-cap'

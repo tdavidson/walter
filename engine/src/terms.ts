@@ -2,7 +2,7 @@
 
 import { D, ONE, ZERO, dec, type Dec } from './decimal.ts'
 import { fail } from './errors.ts'
-import type { Partner, Purpose, Terms, Tier } from './types.ts'
+import type { FeeStep, LpClass, Partner, Purpose, Terms, Tier } from './types.ts'
 
 export interface NormalizedTier {
   type: Tier['type']
@@ -25,6 +25,17 @@ export interface NormalizedPartner {
   commitment: Dec
   carryBearing: boolean
   feeBearing: boolean
+  /** The class id, '' for the fund's own terms. */
+  class: string
+}
+
+/** A class with its terms filled in. The fund's own terms are the class with id ''. */
+export interface NormalizedClass {
+  id: string
+  tiers: NormalizedTier[]
+  subordinated: boolean
+  /** Its own fee steps, or undefined for the fund's. */
+  feeSchedule?: FeeStep[]
 }
 
 export interface NormalizedTerms {
@@ -33,10 +44,15 @@ export interface NormalizedTerms {
   partners: NormalizedPartner[]
   basis: 'whole-fund' | 'deal-by-deal'
   includes: Set<Purpose>
+  /** The fund's own tiers (the class with id ''). */
   tiers: NormalizedTier[]
+  /** Every class, the fund's own first; each partner's `class` names one. */
+  classes: NormalizedClass[]
   recipients: { partner: string; share: Dec }[]
   clawback: boolean
 }
+
+export const FUND_CLASS = ''
 
 const ALL_PURPOSES: Purpose[] = ['investments', 'fees', 'expenses', 'other']
 
@@ -66,7 +82,8 @@ const fraction = (v: string | undefined, what: string, opts: { allowOne?: boolea
 }
 
 export function normalizeTerms(terms: Terms): NormalizedTerms {
-  if (!terms || terms.walter !== '0.1') fail('invalid-terms', 'terms.walter must be "0.1"')
+  if (!terms || (terms.walter !== '0.1' && terms.walter !== '0.2')) fail('invalid-terms', 'terms.walter must be "0.1" or "0.2"')
+  if (terms.classes && terms.walter === '0.1') fail('invalid-terms', 'LP classes need walter "0.2"')
   const minorUnits = terms.fund?.minorUnits ?? 2
   if (!Array.isArray(terms.partners) || terms.partners.length === 0) fail('invalid-terms', 'at least one partner is required')
 
@@ -81,19 +98,74 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
       commitment: dec(p.commitment),
       carryBearing: p.carryBearing ?? p.role === 'lp',
       feeBearing: p.feeBearing ?? p.role === 'lp',
+      class: p.class ?? FUND_CLASS,
     }
   })
 
   const wf = terms.waterfall ?? {}
+  const fundWf = tierList(wf, 'waterfall')
+  const tiers = fundWf.tiers
+  const basis = wf.basis ?? fundWf.basis
+
+  const classIds = new Set<string>()
+  const classes: NormalizedClass[] = [{ id: FUND_CLASS, tiers, subordinated: false }]
+  for (const c of terms.classes ?? []) {
+    if (!c.id) fail('invalid-terms', 'every class needs an id')
+    if (classIds.has(c.id)) fail('invalid-terms', `duplicate class: ${c.id}`)
+    classIds.add(c.id)
+    classes.push({
+      id: c.id,
+      tiers: c.waterfall ? tierList(c.waterfall, `class ${c.id}`).tiers : tiers,
+      subordinated: c.subordinated ?? false,
+      ...(c.managementFee ? { feeSchedule: classFeeSchedule(c) } : {}),
+    })
+  }
+  for (const p of partners) {
+    if (p.class !== FUND_CLASS && !classIds.has(p.class)) fail('unknown-class', `partner ${p.id} names a class that isn't defined: ${p.class}`)
+  }
+
+  let recipients: { partner: string; share: Dec }[]
+  if (wf.carryRecipients && wf.carryRecipients.length > 0) {
+    recipients = wf.carryRecipients.map((r) => {
+      if (!seen.has(r.partner)) fail('unknown-partner', `carry recipient is not a partner: ${r.partner}`)
+      return { partner: r.partner, share: dec(r.share) }
+    })
+    const total = recipients.reduce((s, r) => s.plus(r.share), ZERO)
+    if (!total.eq(1)) fail('invalid-terms', 'carry recipient shares must total 1')
+  } else {
+    const gps = partners.filter((p) => p.role === 'gp')
+    recipients = gps.length === 1 ? [{ partner: gps[0].id, share: ONE }] : []
+  }
+  const paysGp = classes.some((c) => c.tiers.some((t) => t.type === 'catch-up' || (t.type === 'split' && t.gpShare.gt(0))))
+  if (paysGp && recipients.length === 0) fail('no-carry-recipient', 'name carryRecipients, or list exactly one gp partner')
+
+  return {
+    raw: terms,
+    minorUnits,
+    partners,
+    basis: basis ?? 'whole-fund',
+    includes: new Set(wf.returnOfCapital?.includes ?? ALL_PURPOSES),
+    tiers,
+    classes,
+    recipients,
+    clawback: terms.clawback?.enabled ?? true,
+  }
+}
+
+/** A tier list, from tiers or a preset, with each tier's defaults filled and the list's rules checked. */
+function tierList(
+  wf: { preset?: string; presetTerms?: { carry?: string; pref?: string }; tiers?: Tier[] },
+  where: string,
+): { tiers: NormalizedTier[]; basis?: 'whole-fund' | 'deal-by-deal' } {
   let rawTiers = wf.tiers
-  let basis = wf.basis
+  let basis: 'whole-fund' | 'deal-by-deal' | undefined
   if (wf.preset) {
-    if (wf.tiers) fail('invalid-terms', 'give a preset or tiers, not both')
+    if (wf.tiers) fail('invalid-terms', `${where}: give a preset or tiers, not both`)
     const ex = expandPreset(wf.preset, wf.presetTerms?.carry, wf.presetTerms?.pref)
     rawTiers = ex.tiers
-    basis = basis ?? ex.basis
+    basis = ex.basis
   }
-  if (!rawTiers || rawTiers.length === 0) fail('invalid-terms', 'the waterfall needs tiers or a preset')
+  if (!rawTiers || rawTiers.length === 0) fail('invalid-terms', `${where} needs tiers or a preset`)
 
   const counts = new Map<string, number>()
   const tiers = rawTiers!.map((t: Tier, i): NormalizedTier => {
@@ -112,7 +184,7 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
     }
     switch (t.type) {
       case 'return-of-capital':
-        if (i !== 0) fail('invalid-terms', 'return-of-capital must be the first tier')
+        if (i !== 0) fail('invalid-terms', `${where}: return-of-capital must be the first tier`)
         return base
       case 'preferred-return': {
         if ((t.rate === undefined) === (t.multiple === undefined)) fail('invalid-terms', `${id}: give rate or multiple`)
@@ -158,37 +230,19 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
         return fail('invalid-terms', `unknown tier type: ${(t as { type: string }).type}`)
     }
   })
-  if (tiers[0].type !== 'return-of-capital') fail('invalid-terms', 'the first tier must be return-of-capital')
+  if (tiers[0].type !== 'return-of-capital') fail('invalid-terms', `${where}: the first tier must be return-of-capital`)
   const last = tiers[tiers.length - 1]
   if (last.type !== 'split' || last.untilMultiple || last.untilIrr) {
-    fail('invalid-terms', 'the last tier must be a split with no until')
+    fail('invalid-terms', `${where}: the last tier must be a split with no until`)
   }
-  if (tiers.filter((t) => t.type === 'preferred-return').length > 1) fail('invalid-terms', 'at most one preferred-return tier')
-  if (tiers.filter((t) => t.type === 'return-of-capital').length > 1) fail('invalid-terms', 'at most one return-of-capital tier')
+  if (tiers.filter((t) => t.type === 'preferred-return').length > 1) fail('invalid-terms', `${where}: at most one preferred-return tier`)
+  if (tiers.filter((t) => t.type === 'return-of-capital').length > 1) fail('invalid-terms', `${where}: at most one return-of-capital tier`)
 
-  let recipients: { partner: string; share: Dec }[]
-  if (wf.carryRecipients && wf.carryRecipients.length > 0) {
-    recipients = wf.carryRecipients.map((r) => {
-      if (!seen.has(r.partner)) fail('unknown-partner', `carry recipient is not a partner: ${r.partner}`)
-      return { partner: r.partner, share: dec(r.share) }
-    })
-    const total = recipients.reduce((s, r) => s.plus(r.share), ZERO)
-    if (!total.eq(1)) fail('invalid-terms', 'carry recipient shares must total 1')
-  } else {
-    const gps = partners.filter((p) => p.role === 'gp')
-    recipients = gps.length === 1 ? [{ partner: gps[0].id, share: ONE }] : []
-  }
-  const paysGp = tiers.some((t) => t.type === 'catch-up' || (t.type === 'split' && t.gpShare.gt(0)))
-  if (paysGp && recipients.length === 0) fail('no-carry-recipient', 'name carryRecipients, or list exactly one gp partner')
+  return { tiers, basis }
+}
 
-  return {
-    raw: terms,
-    minorUnits,
-    partners,
-    basis: basis ?? 'whole-fund',
-    includes: new Set(wf.returnOfCapital?.includes ?? ALL_PURPOSES),
-    tiers,
-    recipients,
-    clawback: terms.clawback?.enabled ?? true,
-  }
+function classFeeSchedule(c: LpClass): FeeStep[] {
+  const schedule = c.managementFee?.schedule
+  if (!Array.isArray(schedule) || schedule.length === 0) fail('invalid-terms', `class ${c.id}: managementFee.schedule needs at least one step`)
+  return schedule!
 }

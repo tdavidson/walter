@@ -52,6 +52,8 @@ Each partner has an `id`, a `role` of `lp` or `gp`, and a `commitment`.
   terms say otherwise. Carry-free capital takes its pro-rata share of each distribution outside
   the tiers ([04-distributions.md](04-distributions.md)).
 - **`feeBearing`** says whether the partner pays the management fee, with the same defaults.
+- **`class`** (0.2) puts the partner in an LP class with terms of its own
+  ([11-lp-classes.md](11-lp-classes.md)). Without one, the partner is on the fund's terms.
 
 ## Waterfall
 
