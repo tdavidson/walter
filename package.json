@@ -1,0 +1,24 @@
+{
+  "name": "waterline-repo",
+  "private": true,
+  "description": "Waterline: an open spec for fund economics, with test vectors and a reference engine.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "workspaces": [
+    "engine"
+  ],
+  "scripts": {
+    "test": "node --test engine/test/*.test.ts runner/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "vectors": "node runner/run.ts --engine ./engine/src/index.ts --name \"Waterline reference engine\" --out results/reference.json",
+    "compat": "node runner/compat.ts"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "ajv": "^8.17.1",
+    "typescript": "^5.9.0"
+  }
+}

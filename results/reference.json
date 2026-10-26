@@ -1,0 +1,657 @@
+{
+  "waterline": "0.1",
+  "engine": {
+    "name": "Waterline reference engine",
+    "version": "0.1.0"
+  },
+  "summary": {
+    "vectors": 71,
+    "pass": 71,
+    "fail": 0,
+    "unsupported": 0
+  },
+  "results": [
+    {
+      "id": "accrued-carry-below-hurdle",
+      "file": "accrued-carry/accrued-carry-below-hurdle.json",
+      "tags": [
+        "accrued-carry"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "accrued-carry-contributed",
+      "file": "accrued-carry/accrued-carry-contributed.json",
+      "tags": [
+        "accrued-carry",
+        "pref-contributed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "accrued-carry-deal-by-deal",
+      "file": "accrued-carry/accrued-carry-deal-by-deal.json",
+      "tags": [
+        "accrued-carry",
+        "deal-by-deal"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "accrued-carry-straight",
+      "file": "accrued-carry/accrued-carry-straight.json",
+      "tags": [
+        "accrued-carry",
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "accrued-carry-unreturned",
+      "file": "accrued-carry/accrued-carry-unreturned.json",
+      "tags": [
+        "accrued-carry",
+        "pref-unreturned"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "accrued-carry-whole-fund",
+      "file": "accrued-carry/accrued-carry-whole-fund.json",
+      "tags": [
+        "accrued-carry"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-25-carry-large",
+      "file": "catch-up/catch-up-25-carry-large.json",
+      "tags": [
+        "catch-up-full",
+        "rounding"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-50-preferred-five-years",
+      "file": "catch-up/catch-up-50-preferred-five-years.json",
+      "tags": [
+        "catch-up-partial",
+        "catch-up-measure-preferred",
+        "pref-compound"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-50-profit-five-years",
+      "file": "catch-up/catch-up-50-profit-five-years.json",
+      "tags": [
+        "catch-up-partial",
+        "catch-up-measure-profit",
+        "pref-compound"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-80-preferred",
+      "file": "catch-up/catch-up-80-preferred.json",
+      "tags": [
+        "catch-up-partial",
+        "catch-up-measure-preferred"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-80-profit",
+      "file": "catch-up/catch-up-80-profit.json",
+      "tags": [
+        "catch-up-partial",
+        "catch-up-measure-profit"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-after-split",
+      "file": "catch-up/catch-up-after-split.json",
+      "tags": [
+        "catch-up-full",
+        "pref-simple",
+        "day-count-30-360"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-full",
+      "file": "catch-up/catch-up-full.json",
+      "tags": [
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-none",
+      "file": "catch-up/catch-up-none.json",
+      "tags": [
+        "catch-up-none"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-partial-target",
+      "file": "catch-up/catch-up-partial-target.json",
+      "tags": [
+        "catch-up-partial"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-resumes",
+      "file": "catch-up/catch-up-resumes.json",
+      "tags": [
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-runs-out",
+      "file": "catch-up/catch-up-runs-out.json",
+      "tags": [
+        "catch-up-partial",
+        "catch-up-measure-preferred"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-share-below-carry-profit-invalid",
+      "file": "catch-up/catch-up-share-below-carry-profit-invalid.json",
+      "tags": [
+        "catch-up-measure-profit",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "catch-up-share-below-carry",
+      "file": "catch-up/catch-up-share-below-carry.json",
+      "tags": [
+        "catch-up-partial",
+        "catch-up-measure-preferred"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-disabled",
+      "file": "clawback/clawback-disabled.json",
+      "tags": [
+        "clawback"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-early-carry",
+      "file": "clawback/clawback-early-carry.json",
+      "tags": [
+        "clawback",
+        "pref-contributed",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-unreturned",
+      "file": "clawback/clawback-unreturned.json",
+      "tags": [
+        "clawback",
+        "pref-unreturned",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "deal-by-deal-clawback",
+      "file": "deal-by-deal/deal-by-deal-clawback.json",
+      "tags": [
+        "deal-by-deal",
+        "clawback",
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "deal-by-deal-fees-ride-with-deals",
+      "file": "deal-by-deal/deal-by-deal-fees-ride-with-deals.json",
+      "tags": [
+        "deal-by-deal",
+        "fees-in-capital",
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "deal-by-deal-realized",
+      "file": "deal-by-deal/deal-by-deal-realized.json",
+      "tags": [
+        "deal-by-deal",
+        "pref-compound",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "fees-committed-quarterly",
+      "file": "fees/fees-committed-quarterly.json",
+      "tags": [
+        "fees",
+        "fees-committed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "fees-nav-semiannual",
+      "file": "fees/fees-nav-semiannual.json",
+      "tags": [
+        "fees",
+        "fees-nav"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "fees-offsets-carry-forward",
+      "file": "fees/fees-offsets-carry-forward.json",
+      "tags": [
+        "fees",
+        "fees-offsets"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "fees-organizational-expense-cap",
+      "file": "fees/fees-organizational-expense-cap.json",
+      "tags": [
+        "fees",
+        "fees-offsets"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "fees-step-down-invested",
+      "file": "fees/fees-step-down-invested.json",
+      "tags": [
+        "fees",
+        "fees-step-down",
+        "fees-invested"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "fees-step-mid-period",
+      "file": "fees/fees-step-mid-period.json",
+      "tags": [
+        "fees",
+        "fees-step-down"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "fees-stub-period",
+      "file": "fees/fees-stub-period.json",
+      "tags": [
+        "fees",
+        "fees-committed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "partners-gp-commit-carry-free",
+      "file": "partners/partners-gp-commit-carry-free.json",
+      "tags": [
+        "gp-commit",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "partners-replay-then-split",
+      "file": "partners/partners-replay-then-split.json",
+      "tags": [
+        "pref-compound",
+        "pref-contributed",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "partners-replay-unreturned",
+      "file": "partners/partners-replay-unreturned.json",
+      "tags": [
+        "pref-compound",
+        "pref-unreturned",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "partners-two-recipients",
+      "file": "partners/partners-two-recipients.json",
+      "tags": [
+        "carry-recipients"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-30-360-month-end",
+      "file": "preferred-return/pref-30-360-month-end.json",
+      "tags": [
+        "pref-simple",
+        "day-count-30-360"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-30-360-simple-full-catch-up",
+      "file": "preferred-return/pref-30-360-simple-full-catch-up.json",
+      "tags": [
+        "pref-simple",
+        "day-count-30-360",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-contributed-ignores-returns",
+      "file": "preferred-return/pref-contributed-ignores-returns.json",
+      "tags": [
+        "pref-compound",
+        "pref-contributed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-leap-year",
+      "file": "preferred-return/pref-leap-year.json",
+      "tags": [
+        "pref-compound",
+        "day-count-act-365"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-multiple",
+      "file": "preferred-return/pref-multiple.json",
+      "tags": [
+        "pref-multiple",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-one-year-compound",
+      "file": "preferred-return/pref-one-year-compound.json",
+      "tags": [
+        "pref-compound",
+        "day-count-act-365"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-one-year-simple",
+      "file": "preferred-return/pref-one-year-simple.json",
+      "tags": [
+        "pref-simple",
+        "day-count-act-365"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-per-contribution-dates",
+      "file": "preferred-return/pref-per-contribution-dates.json",
+      "tags": [
+        "pref-compound",
+        "day-count-act-365"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-two-years-compound",
+      "file": "preferred-return/pref-two-years-compound.json",
+      "tags": [
+        "pref-compound",
+        "day-count-act-365"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-two-years-simple",
+      "file": "preferred-return/pref-two-years-simple.json",
+      "tags": [
+        "pref-simple",
+        "day-count-act-365"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-unreturned-capital-back",
+      "file": "preferred-return/pref-unreturned-capital-back.json",
+      "tags": [
+        "pref-compound",
+        "pref-unreturned"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "pref-unreturned-simple",
+      "file": "preferred-return/pref-unreturned-simple.json",
+      "tags": [
+        "pref-simple",
+        "pref-unreturned"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-after-end",
+      "file": "recycling/recycling-after-end.json",
+      "tags": [
+        "recycling",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-cap-on-fees",
+      "file": "recycling/recycling-cap-on-fees.json",
+      "tags": [
+        "recycling",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-deemed-contributed",
+      "file": "recycling/recycling-deemed-contributed.json",
+      "tags": [
+        "recycling",
+        "recycling-deemed",
+        "pref-contributed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-deemed-unreturned",
+      "file": "recycling/recycling-deemed-unreturned.json",
+      "tags": [
+        "recycling",
+        "recycling-deemed",
+        "pref-unreturned"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-default-treatment",
+      "file": "recycling/recycling-default-treatment.json",
+      "tags": [
+        "recycling",
+        "recycling-deemed"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-never-distributed",
+      "file": "recycling/recycling-never-distributed.json",
+      "tags": [
+        "recycling",
+        "recycling-never-distributed",
+        "pref-unreturned"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-not-permitted",
+      "file": "recycling/recycling-not-permitted.json",
+      "tags": [
+        "recycling",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "recycling-over-cap",
+      "file": "recycling/recycling-over-cap.json",
+      "tags": [
+        "recycling",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "roc-called-to-date",
+      "file": "return-of-capital/roc-called-to-date.json",
+      "tags": [
+        "return-of-capital",
+        "pref-unreturned",
+        "catch-up-full",
+        "clawback"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "roc-excludes-fees",
+      "file": "return-of-capital/roc-excludes-fees.json",
+      "tags": [
+        "return-of-capital",
+        "fees-in-capital"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "roc-includes-fees",
+      "file": "return-of-capital/roc-includes-fees.json",
+      "tags": [
+        "return-of-capital",
+        "fees-in-capital"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "roc-only",
+      "file": "return-of-capital/roc-only.json",
+      "tags": [
+        "return-of-capital"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "roc-then-partial-pref",
+      "file": "return-of-capital/roc-then-partial-pref.json",
+      "tags": [
+        "return-of-capital",
+        "pref-multiple"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "refuse-negative-amount",
+      "file": "rounding/refuse-negative-amount.json",
+      "tags": [
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "refuse-unknown-partner",
+      "file": "rounding/refuse-unknown-partner.json",
+      "tags": [
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "rounding-sub-cent-distributable",
+      "file": "rounding/rounding-sub-cent-distributable.json",
+      "tags": [
+        "rounding"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "rounding-three-way-split",
+      "file": "rounding/rounding-three-way-split.json",
+      "tags": [
+        "rounding"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "rounding-to-cents",
+      "file": "rounding/rounding-to-cents.json",
+      "tags": [
+        "rounding"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "preset-european-standard",
+      "file": "split/preset-european-standard.json",
+      "tags": [
+        "presets",
+        "catch-up-full",
+        "pref-unreturned"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "split-straight",
+      "file": "split/split-straight.json",
+      "tags": [
+        "split-only"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "split-tiered-irr-catch-up",
+      "file": "split/split-tiered-irr-catch-up.json",
+      "tags": [
+        "split-tiered",
+        "split-until-irr",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "split-tiered-multiple",
+      "file": "split/split-tiered-multiple.json",
+      "tags": [
+        "split-tiered",
+        "split-until-multiple"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "split-zero-carry",
+      "file": "split/split-zero-carry.json",
+      "tags": [
+        "split-only"
+      ],
+      "status": "pass"
+    }
+  ]
+}
