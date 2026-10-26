@@ -53,7 +53,8 @@ export interface CatchUpTier {
    *              "until the GP has received 20% of the amounts distributed under (ii) and (iii)").
    *   preferred  the GP's catch-up equals target ÷ (1 − target) of the preferred return paid,
    *              whatever share of the catch-up flow went to the LPs.
-   * The two agree whenever gpShare is 1. Default `profit`.
+   * The two agree whenever gpShare is 1 and nothing comes between the pref and the catch-up.
+   * Default `preferred`.
    */
   measure?: 'profit' | 'preferred'
   source?: Source
