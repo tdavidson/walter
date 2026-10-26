@@ -6,9 +6,9 @@
   },
   "summary": {
     "vectors": 71,
-    "pass": 64,
+    "pass": 71,
     "fail": 0,
-    "unsupported": 7
+    "unsupported": 0
   },
   "results": [
     {
@@ -244,10 +244,7 @@
         "fees",
         "fees-committed"
       ],
-      "status": "unsupported",
-      "problems": [
-        "the management fee schedule"
-      ]
+      "status": "pass"
     },
     {
       "id": "fees-nav-semiannual",
@@ -256,10 +253,7 @@
         "fees",
         "fees-nav"
       ],
-      "status": "unsupported",
-      "problems": [
-        "the management fee schedule"
-      ]
+      "status": "pass"
     },
     {
       "id": "fees-offsets-carry-forward",
@@ -268,10 +262,7 @@
         "fees",
         "fees-offsets"
       ],
-      "status": "unsupported",
-      "problems": [
-        "the management fee schedule"
-      ]
+      "status": "pass"
     },
     {
       "id": "fees-organizational-expense-cap",
@@ -280,10 +271,7 @@
         "fees",
         "fees-offsets"
       ],
-      "status": "unsupported",
-      "problems": [
-        "the management fee schedule"
-      ]
+      "status": "pass"
     },
     {
       "id": "fees-step-down-invested",
@@ -293,10 +281,7 @@
         "fees-step-down",
         "fees-invested"
       ],
-      "status": "unsupported",
-      "problems": [
-        "the management fee schedule"
-      ]
+      "status": "pass"
     },
     {
       "id": "fees-step-mid-period",
@@ -305,10 +290,7 @@
         "fees",
         "fees-step-down"
       ],
-      "status": "unsupported",
-      "problems": [
-        "the management fee schedule"
-      ]
+      "status": "pass"
     },
     {
       "id": "fees-stub-period",
@@ -317,10 +299,7 @@
         "fees",
         "fees-committed"
       ],
-      "status": "unsupported",
-      "problems": [
-        "the management fee schedule"
-      ]
+      "status": "pass"
     },
     {
       "id": "partners-gp-commit-carry-free",

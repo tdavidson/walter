@@ -6,7 +6,7 @@ engine said it cannot express the terms, which is listed rather than counted as 
 
 | Tag | Walter reference engine 0.1.0 | Hemrock Fund Economics Tool lib/fund-economics period waterfall | Hemrock Portfolio accounting @portfolio/fund-engine 0.2.0 |
 | --- | --- | --- | --- |
-| **All vectors** | **71/71** | **64/71** | **61/71** |
+| **All vectors** | **71/71** | **71/71** | **68/71** |
 | `accrued-carry` | 6/6 | 6/6 | 6/6 |
 | `carry-recipients` | 1/1 | 1/1 | 1/1 |
 | `catch-up-full` | 15/15 | 15/15 | 14/15 (1 unsupported) |
@@ -19,13 +19,13 @@ engine said it cannot express the terms, which is listed rather than counted as 
 | `day-count-act-365` | 6/6 | 6/6 | 6/6 |
 | `deal-by-deal` | 4/4 | 4/4 | 4/4 |
 | `errors` | 7/7 | 7/7 | 7/7 |
-| `fees` | 7/7 | 0/7 (7 unsupported) | 0/7 (7 unsupported) |
-| `fees-committed` | 2/2 | 0/2 (2 unsupported) | 0/2 (2 unsupported) |
+| `fees` | 7/7 | 7/7 | 7/7 |
+| `fees-committed` | 2/2 | 2/2 | 2/2 |
 | `fees-in-capital` | 3/3 | 3/3 | 2/3 (1 unsupported) |
-| `fees-invested` | 1/1 | 0/1 (1 unsupported) | 0/1 (1 unsupported) |
-| `fees-nav` | 1/1 | 0/1 (1 unsupported) | 0/1 (1 unsupported) |
-| `fees-offsets` | 2/2 | 0/2 (2 unsupported) | 0/2 (2 unsupported) |
-| `fees-step-down` | 2/2 | 0/2 (2 unsupported) | 0/2 (2 unsupported) |
+| `fees-invested` | 1/1 | 1/1 | 1/1 |
+| `fees-nav` | 1/1 | 1/1 | 1/1 |
+| `fees-offsets` | 2/2 | 2/2 | 2/2 |
+| `fees-step-down` | 2/2 | 2/2 | 2/2 |
 | `gp-commit` | 1/1 | 1/1 | 1/1 |
 | `pref-compound` | 11/11 | 11/11 | 11/11 |
 | `pref-contributed` | 5/5 | 5/5 | 5/5 |
@@ -43,25 +43,8 @@ engine said it cannot express the terms, which is listed rather than counted as 
 | `split-until-irr` | 1/1 | 1/1 | 0/1 (1 unsupported) |
 | `split-until-multiple` | 1/1 | 1/1 | 0/1 (1 unsupported) |
 
-## Hemrock Fund Economics Tool: known differences
-
-- `fees-committed-quarterly` (unsupported): the management fee schedule
-- `fees-nav-semiannual` (unsupported): the management fee schedule
-- `fees-offsets-carry-forward` (unsupported): the management fee schedule
-- `fees-organizational-expense-cap` (unsupported): the management fee schedule
-- `fees-step-down-invested` (unsupported): the management fee schedule
-- `fees-step-mid-period` (unsupported): the management fee schedule
-- `fees-stub-period` (unsupported): the management fee schedule
-
 ## Hemrock Portfolio accounting: known differences
 
-- `fees-committed-quarterly` (unsupported): the management fee schedule (the close charges one rate on one basis per period)
-- `fees-nav-semiannual` (unsupported): the management fee schedule (the close charges one rate on one basis per period)
-- `fees-offsets-carry-forward` (unsupported): the management fee schedule (the close charges one rate on one basis per period)
-- `fees-organizational-expense-cap` (unsupported): the management fee schedule (the close charges one rate on one basis per period)
-- `fees-step-down-invested` (unsupported): the management fee schedule (the close charges one rate on one basis per period)
-- `fees-step-mid-period` (unsupported): the management fee schedule (the close charges one rate on one basis per period)
-- `fees-stub-period` (unsupported): the management fee schedule (the close charges one rate on one basis per period)
 - `roc-excludes-fees` (unsupported): capital that leaves some contributions out of return of capital (the engine returns every contribution)
 - `split-tiered-irr-catch-up` (unsupported): a split that steps up at a hurdle (the engine has one carry rate)
 - `split-tiered-multiple` (unsupported): a split that steps up at a hurdle (the engine has one carry rate)
