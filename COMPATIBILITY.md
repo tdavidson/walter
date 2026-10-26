@@ -6,7 +6,7 @@ engine said it cannot express the terms, which is listed rather than counted as 
 
 | Tag | Walter reference engine 0.3.0 | Hemrock Fund Economics Tool lib/fund-economics period waterfall | Hemrock Portfolio accounting @portfolio/fund-engine 0.2.0 |
 | --- | --- | --- | --- |
-| **All vectors** | **88/88** | **83/83** | **83/83** |
+| **All vectors** | **88/88** | **87/88** | **87/88** |
 | `accrued-carry` | 6/6 | 6/6 | 6/6 |
 | `carry-recipients` | 1/1 | 1/1 | 1/1 |
 | `catch-up-full` | 16/16 | 16/16 | 16/16 |
@@ -14,18 +14,18 @@ engine said it cannot express the terms, which is listed rather than counted as 
 | `catch-up-measure-profit` | 3/3 | 3/3 | 3/3 |
 | `catch-up-none` | 1/1 | 1/1 | 1/1 |
 | `catch-up-partial` | 7/7 | 7/7 | 7/7 |
-| `classes` | 13/13 | 12/12 | 12/12 |
+| `classes` | 13/13 | 13/13 | 13/13 |
 | `clawback` | 6/6 | 6/6 | 6/6 |
 | `day-count-30-360` | 3/3 | 3/3 | 3/3 |
 | `day-count-act-365` | 6/6 | 6/6 | 6/6 |
 | `deal-by-deal` | 4/4 | 4/4 | 4/4 |
-| `errors` | 11/11 | 10/10 | 10/10 |
+| `errors` | 11/11 | 11/11 | 11/11 |
 | `fees` | 9/9 | 9/9 | 9/9 |
 | `fees-committed` | 4/4 | 4/4 | 4/4 |
 | `fees-in-capital` | 3/3 | 3/3 | 3/3 |
 | `fees-invested` | 1/1 | 1/1 | 1/1 |
 | `fees-nav` | 1/1 | 1/1 | 1/1 |
-| `fees-offsets` | 4/4 | 3/3 | 3/3 |
+| `fees-offsets` | 4/4 | 4/4 | 4/4 |
 | `fees-step-down` | 2/2 | 2/2 | 2/2 |
 | `first-loss` | 3/3 | 3/3 | 3/3 |
 | `gp-commit` | 2/2 | 2/2 | 2/2 |
@@ -38,12 +38,20 @@ engine said it cannot express the terms, which is listed rather than counted as 
 | `recycling` | 8/8 | 8/8 | 8/8 |
 | `recycling-deemed` | 3/3 | 3/3 | 3/3 |
 | `recycling-never-distributed` | 1/1 | 1/1 | 1/1 |
-| `reporting` | 5/5 |  |  |
-| `reporting-carry` | 3/3 |  |  |
-| `reporting-offsets` | 1/1 |  |  |
+| `reporting` | 5/5 | 4/5 (1 unsupported) | 4/5 (1 unsupported) |
+| `reporting-carry` | 3/3 | 2/3 (1 unsupported) | 2/3 (1 unsupported) |
+| `reporting-offsets` | 1/1 | 1/1 | 1/1 |
 | `return-of-capital` | 5/5 | 5/5 | 5/5 |
 | `rounding` | 4/4 | 4/4 | 4/4 |
 | `split-only` | 9/9 | 9/9 | 9/9 |
 | `split-tiered` | 2/2 | 2/2 | 2/2 |
 | `split-until-irr` | 1/1 | 1/1 | 1/1 |
 | `split-until-multiple` | 1/1 | 1/1 | 1/1 |
+
+## Hemrock Fund Economics Tool: known differences
+
+- `reporting-carry-recipient-bears-carry` (unsupported): a carry recipient that also bears carry (gp)
+
+## Hemrock Portfolio accounting: known differences
+
+- `reporting-carry-recipient-bears-carry` (unsupported): a carry recipient that also bears carry (gp)

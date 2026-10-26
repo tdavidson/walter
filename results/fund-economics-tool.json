@@ -5,10 +5,10 @@
     "version": "lib/fund-economics period waterfall"
   },
   "summary": {
-    "vectors": 83,
-    "pass": 83,
+    "vectors": 88,
+    "pass": 87,
     "fail": 0,
-    "unsupported": 0
+    "unsupported": 1
   },
   "results": [
     {
@@ -635,6 +635,56 @@
       "tags": [
         "recycling",
         "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-carry-by-class",
+      "file": "vectors/reporting/reporting-carry-by-class.json",
+      "tags": [
+        "reporting",
+        "reporting-carry",
+        "classes"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-carry-paid-and-borne",
+      "file": "vectors/reporting/reporting-carry-paid-and-borne.json",
+      "tags": [
+        "reporting",
+        "reporting-carry"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-carry-recipient-bears-carry",
+      "file": "vectors/reporting/reporting-carry-recipient-bears-carry.json",
+      "tags": [
+        "reporting",
+        "reporting-carry"
+      ],
+      "status": "unsupported",
+      "problems": [
+        "a carry recipient that also bears carry (gp)"
+      ]
+    },
+    {
+      "id": "reporting-new-kinds-need-0-3",
+      "file": "vectors/reporting/reporting-new-kinds-need-0-3.json",
+      "tags": [
+        "reporting",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-offsets-recognized-by-kind",
+      "file": "vectors/reporting/reporting-offsets-recognized-by-kind.json",
+      "tags": [
+        "reporting",
+        "reporting-offsets",
+        "fees-offsets"
       ],
       "status": "pass"
     },
