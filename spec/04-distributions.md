@@ -43,11 +43,11 @@ All to the LPs. `P += F`.
 
 **Catch-up**, target `t`, gpShare `k`:
 
-- measure `profit`: `want = (t × Π − G) ÷ (k − t)`. The GP gets `k × F` and the LPs the rest.
-  When `F = want`, the GP holds exactly `t` of all profit.
-- measure `preferred`: the GP is owed `N = t × P ÷ (1 − t) − Qᵢ`, and `want = N ÷ k`. When the
+- measure `preferred` (the default): the GP is owed `N = t × P ÷ (1 − t) − Qᵢ`, and `want = N ÷ k`. When the
   pool covers `want`, the GP gets exactly `N` and the LPs `want − N`; otherwise the GP gets
   `k × F`.
+- measure `profit`: `want = (t × Π − G) ÷ (k − t)`. The GP gets `k × F` and the LPs the rest.
+  When `F = want`, the GP holds exactly `t` of all profit.
 
 **Split**, gpShare `g`. Without `until`, `want = rem`. With `until.lpMultiple` m,
 `want = (m × C − L) ÷ (1 − g)`. With `until.lpIrr` r, `want = S ÷ (1 − g)`, where S is what the

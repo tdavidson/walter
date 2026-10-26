@@ -38,7 +38,8 @@
         {
           "type": "catch-up",
           "target": "0.20",
-          "gpShare": "0.1"
+          "gpShare": "0.1",
+          "measure": "profit"
         },
         {
           "type": "split",

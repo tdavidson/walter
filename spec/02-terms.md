@@ -105,16 +105,17 @@ by deal it's the capital in realized deals.
 | --- | --- | --- | --- |
 | `target` | a fraction below 1 | | The GP's share of profit once caught up |
 | `gpShare` | a fraction above 0 | `"1"` | The GP's share of each dollar during the catch-up |
-| `measure` | `profit`, `preferred` | `profit` | What the target is measured against |
+| `measure` | `preferred`, `profit` | `preferred` | What the target is measured against |
 
-The two measures are two LPA wordings that agree when `gpShare` is 1 and part when it isn't:
+The two measures are two LPA wordings. They agree when `gpShare` is 1 and the catch-up comes straight after the preferred return, and part otherwise (a catch-up after a split, or one the LPs share):
 
+- **`preferred`** (the default): "until the General Partner has received an amount equal to 25% of
+  the preferred return distributed". The GP's catch-up is `target ÷ (1 − target)` of the preferred
+  return paid, however much of the catch-up flow went to the LPs. This is the reading the existing
+  engines use, which is why it's the default.
 - **`profit`**: "until the General Partner has received 20% of the sum of the amounts distributed
   under clause (ii) and this clause (iii)". The catch-up ends when the GP holds `target` of all
   profit distributed so far.
-- **`preferred`**: "until the General Partner has received an amount equal to 25% of the preferred
-  return distributed". The GP's catch-up is `target ÷ (1 − target)` of the preferred return paid,
-  however much of the catch-up flow went to the LPs.
 
 On 100 called and 200 back after five years at 8% compounding, a 50/50 catch-up to 20% leaves the
 GP with 20.00 under `profit` and 17.65 under `preferred`. Both vectors are in the suite

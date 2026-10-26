@@ -108,7 +108,7 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
       dayCount: 'act/365',
       target: ZERO,
       gpShare: ZERO,
-      measure: 'profit',
+      measure: 'preferred',
     }
     switch (t.type) {
       case 'return-of-capital':
@@ -134,7 +134,7 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
       case 'catch-up': {
         const target = fraction(t.target, `${id}.target`)
         const gpShare = t.gpShare === undefined ? ONE : fraction(t.gpShare, `${id}.gpShare`, { allowOne: true })
-        const measure = t.measure ?? 'profit'
+        const measure = t.measure ?? 'preferred'
         if (gpShare.isZero()) fail('invalid-terms', `${id}: gpShare must be above 0`)
         if (measure === 'profit' && gpShare.lte(target)) {
           fail('invalid-terms', `${id}: with measure "profit" the GP never catches up unless gpShare is above the target`)
