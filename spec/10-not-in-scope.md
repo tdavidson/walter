@@ -19,9 +19,11 @@ still out listed there.
 
 ## Reporting
 
-ILPA's Reporting Template and Performance Template ask for carried interest accrued, earned and
-paid in the capital account statement, a gross-to-net fee reconciliation with offsets by category,
-and IRR with and without the subscription line. Walter's results (allocations by tier,
-`accruedCarry`, fee periods with offsets) should map onto those rows line by line, and that
-mapping should be published as a table here once it's been checked against the templates
-themselves.
+The ILPA mapping is in [12-reporting.md](12-reporting.md). What it leaves to the fund's books:
+
+| Row or figure | Why it's out |
+| --- | --- |
+| Each partner's management fee by window | `feesByPartner` is the whole schedule; per period by partner would be a new result field |
+| Carry accrued by partner | The fund-end run would have to be done per partner |
+| Offsets to expenses, rebates and waivers | Walter's offsets reduce the management fee only |
+| Subscription facility flows | Credit facilities aren't modelled; the Performance Template's "with" and "without" returns are the same |

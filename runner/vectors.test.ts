@@ -13,8 +13,8 @@ import { loadVectors } from './vectors.ts'
 const schema = (name: string) => JSON.parse(readFileSync(new URL(`../schema/${name}.schema.json`, import.meta.url), 'utf8'))
 const ajv = new Ajv2020.default({ allErrors: true, strict: false })
 for (const s of ['terms', 'flows', 'result', 'vector']) ajv.addSchema(schema(s))
-const validVector = ajv.getSchema('https://hemrock.com/walter/0.2/vector.schema.json')!
-const validResult = ajv.getSchema('https://hemrock.com/walter/0.2/result.schema.json')!
+const validVector = ajv.getSchema('https://hemrock.com/walter/0.3/vector.schema.json')!
+const validResult = ajv.getSchema('https://hemrock.com/walter/0.3/result.schema.json')!
 
 const vectors = loadVectors()
 
@@ -73,5 +73,22 @@ test('a full catch-up leaves the GP holding its target share of profit', () => {
     const gp = res.allocations.filter((a) => gps.has(a.partner)).reduce((s, a) => s + Number(a.amount), 0)
     const profit = res.allocations.filter((a) => a.tier !== 'return-of-capital' && a.tier !== 'recycled').reduce((s, a) => s + Number(a.amount), 0)
     assert.ok(Math.abs(gp - profit * Number(splits[0].gpShare)) <= 0.011, `${v.id}: GP ${gp} of ${profit}`)
+  }
+})
+
+test('carry lines add up to zero on every date, and credit only carry recipients', () => {
+  for (const v of vectors) {
+    if (v.expected.error) continue
+    const t = v.terms as any
+    const res = run(structuredClone(t), structuredClone(v.flows) as any)
+    const recipients = new Set<string>(
+      t.waterfall?.carryRecipients?.map((r: any) => r.partner) ?? t.partners.filter((p: any) => p.role === 'gp').map((p: any) => p.id),
+    )
+    const byDate = new Map<string, number>()
+    for (const c of res.carry) {
+      byDate.set(c.date, Math.round(((byDate.get(c.date) ?? 0) + Number(c.amount)) * 100) / 100)
+      if (Number(c.amount) > 0) assert.ok(recipients.has(c.partner), `${v.id}: ${c.partner} credited carry on ${c.date}`)
+    }
+    for (const [date, total] of byDate) assert.equal(total, 0, `${v.id} on ${date}`)
   }
 })

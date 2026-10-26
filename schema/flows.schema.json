@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/walter/0.2/flows.schema.json",
+  "$id": "https://hemrock.com/walter/0.3/flows.schema.json",
   "title": "Walter flows",
   "description": "The dated cash flows and events a fund's terms are applied to.",
   "type": "array",
@@ -186,11 +186,18 @@
             },
             "kind": {
               "enum": [
+                "advisory",
+                "broken-deal",
                 "transaction",
-                "monitoring",
                 "directors",
+                "monitoring",
+                "capital-markets",
+                "arrangement",
+                "origination",
+                "reimbursement",
                 "other"
-              ]
+              ],
+              "description": "The ILPA Reporting Template's categories. 0.1 and 0.2 have transaction, monitoring, directors and other only."
             },
             "amount": {
               "$ref": "#/$defs/amount"

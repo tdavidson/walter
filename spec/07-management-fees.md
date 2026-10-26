@@ -55,7 +55,10 @@ Each period's gross fee is rounded to the minor unit, half to even.
 ## Offsets
 
 `offsets` gives, for each kind of portfolio-company fee income, the share that reduces the
-management fee. A `portfolio-fee` flow dated in a period earns `amount × share` of offset in it.
+management fee. The kinds are the ILPA Reporting Template's: `advisory`, `broken-deal`,
+`transaction`, `directors`, `monitoring`, `capital-markets`, `arrangement`, `origination`,
+`reimbursement` and `other`. Before 0.3 there were four (`transaction`, `monitoring`, `directors`,
+`other`), and terms that offset any other kind must say `"walter": "0.3"`. A `portfolio-fee` flow dated in a period earns `amount × share` of offset in it.
 Organizational expenses above `organizationalExpenseCap`, cumulative from the first one, also
 offset the fee dollar for dollar in the period they're incurred.
 
@@ -65,7 +68,11 @@ never below zero, and any offset left carries forward to the next period.
 
 ## The result
 
-`fees` lists each period's `start`, `end`, `gross`, `offset` and `net`. `feesByPartner` splits the
+`fees` lists each period's `start`, `end`, `gross`, `offset` and `net`. From 0.3 each period
+also has `recognized`, the offset it earned before any was applied, keyed by the kind of fee it
+came from or `organizational` for expenses over the cap and each rounded to the minor unit, half to
+even; and `unapplied`, the offset still to use at the period's end, rounded the same way. `offset`
+is what was applied. ILPA reports all three ([12-reporting.md](12-reporting.md)). `feesByPartner` splits the
 total net fee across the fee-bearing partners by commitment, by largest remainder.
 
 ## LP classes

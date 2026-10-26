@@ -30,7 +30,7 @@ const results = loadVectors().map((v) => {
 })
 const count = (s: string) => results.filter((r) => r.status === s).length
 const report = {
-  walter: '0.2',
+  walter: '0.3',
   engine: { name, version },
   summary: { vectors: results.length, pass: count('pass'), fail: count('fail'), unsupported: count('unsupported') },
   results,

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/walter/0.2/result.schema.json",
+  "$id": "https://hemrock.com/walter/0.3/result.schema.json",
   "title": "Walter result",
   "description": "What an engine returns for a set of terms and flows.",
   "type": "object",
@@ -10,7 +10,11 @@
   ],
   "properties": {
     "walter": {
-      "enum": ["0.1", "0.2"]
+      "enum": [
+        "0.1",
+        "0.2",
+        "0.3"
+      ]
     },
     "allocations": {
       "type": "array",
@@ -139,6 +143,29 @@
         }
       }
     },
+    "carry": {
+      "type": "array",
+      "description": "0.3. The carry in each distribution: credited to each recipient (positive) and charged to the partners who bore it (negative). The lines for a distribution add up to zero.",
+      "items": {
+        "type": "object",
+        "required": [
+          "date",
+          "partner",
+          "amount"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "#/$defs/date"
+          },
+          "partner": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/$defs/money"
+          }
+        }
+      }
+    },
     "fees": {
       "type": "array",
       "items": {
@@ -161,10 +188,37 @@
             "$ref": "#/$defs/money"
           },
           "offset": {
-            "$ref": "#/$defs/money"
+            "$ref": "#/$defs/money",
+            "description": "The offset applied in the period."
           },
           "net": {
             "$ref": "#/$defs/money"
+          },
+          "recognized": {
+            "type": "object",
+            "description": "0.3. The offset earned in the period, before any is applied: by kind of portfolio-company fee, and organizational for expenses over the cap.",
+            "propertyNames": {
+              "enum": [
+                "advisory",
+                "broken-deal",
+                "transaction",
+                "directors",
+                "monitoring",
+                "capital-markets",
+                "arrangement",
+                "origination",
+                "reimbursement",
+                "other",
+                "organizational"
+              ]
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/money"
+            }
+          },
+          "unapplied": {
+            "$ref": "#/$defs/money",
+            "description": "0.3. Offset earned but not yet applied at the period's end, carried to the next."
           }
         }
       }

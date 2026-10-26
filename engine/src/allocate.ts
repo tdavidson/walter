@@ -26,6 +26,8 @@ export interface AllocateOutput {
   recycled: { date: string; amount: string; treatment: Treatment }[]
   clawback?: { date: string; paid: string; entitlement: string; amount: string }
   accruedCarry: { date: string; nav: string; entitlement: string; paid: string; accrued: string }[]
+  /** Carry paid in each distribution: credited to its recipients, charged to the partners who bore it. */
+  carry: { date: string; partner: string; amount: string }[]
   totals: Record<string, { contributed: string; distributed: string; net: string }>
   warnings: string[]
   /** The GP's share received through the tiers, before any clawback. */
@@ -116,6 +118,7 @@ class Run {
       recontributions: [],
       recycled: [],
       accruedCarry: [],
+      carry: [],
       totals: {},
       warnings: [],
       gpPaid: ZERO,
@@ -375,12 +378,38 @@ class Run {
       if (l.kind === 'pref') t.pref = t.pref.plus(a)
       today.set(l.book, t)
     })
+    this.bookCarry(date, lines, rounded, w)
     for (const [c, t] of today) {
       c.ws.returned = c.ws.returned.plus(t.roc)
       c.ws.preferredPaid = c.ws.preferredPaid.plus(t.pref)
       c.ws.lp = c.ws.lp.plus(t.lp)
       if (t.lp.gt(0)) c.lpDistributions.push({ date, amount: t.lp })
       if (t.roc.gt(0) || t.pref.gt(0)) c.reductions.push({ date, capital: t.roc, preferred: t.pref })
+    }
+  }
+
+  /**
+   * The carry in one distribution, from both sides: each recipient is credited what it received
+   * through the tiers' GP share, and each class's carry is charged to that class's carry-bearing
+   * partners by the same weights their own lines were split by. A partner on both sides is shown
+   * net, so the lines for a distribution add up to zero.
+   */
+  private bookCarry(date: string, lines: { partner: string; gp: boolean; book?: ClassBook }[], rounded: Dec[], w: Dec[]) {
+    const net = new Map<string, Dec>()
+    const add = (id: string, x: Dec) => net.set(id, (net.get(id) ?? ZERO).plus(x))
+    const byBook = new Map<ClassBook, Dec>()
+    lines.forEach((l, i) => {
+      if (!l.gp || !l.book || rounded[i].isZero()) return
+      add(l.partner, rounded[i])
+      byBook.set(l.book, (byBook.get(l.book) ?? ZERO).plus(rounded[i]))
+    })
+    for (const [book, total] of byBook) {
+      const shares = apportion(total, book.members.map((i) => w[i]), this.mu)
+      book.members.forEach((i, k) => add(this.nt.partners[i].id, shares[k].neg()))
+    }
+    for (const p of this.nt.partners) {
+      const x = net.get(p.id)
+      if (x && !x.isZero()) this.out.carry.push({ date, partner: p.id, amount: money(x, this.mu) })
     }
   }
 

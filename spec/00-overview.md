@@ -1,4 +1,4 @@
-# Walter 0.2
+# Walter 0.3
 
 Walter is an open, machine-readable description of how a venture fund's economics work: who
 gets which dollar of a distribution, what the preferred return is on a given day, when the GP
@@ -20,7 +20,7 @@ into a term with a name and a vector for every value, so nothing gets quietly de
 
 ## Scope
 
-0.2 covers the distribution waterfall and the management fee that feeds it:
+0.3 covers the distribution waterfall and the management fee that feeds it:
 
 - whole-fund and deal-by-deal waterfalls, with return of capital on capital contributed so far
   (with or without fees and expenses), a preferred return as a simple or compounding rate on
@@ -32,7 +32,9 @@ into a term with a name and a vector for every value, so nothing gets quietly de
 - clawback at fund end, and carry accrued at a NAV;
 - management fees on commitments, invested capital or NAV, with step-downs at a date or an event,
   fee offsets and an organizational expense cap;
-- LP classes with their own tiers and fee rates, and first-loss classes (new in 0.2).
+- LP classes with their own tiers and fee rates, and first-loss classes (new in 0.2);
+- what an LP report needs from all of that: carry paid and who bore it, offsets by kind and the
+  unapplied balance, and how each result fills the ILPA templates (new in 0.3).
 
 What it leaves out is in [10-not-in-scope.md](10-not-in-scope.md).
 
@@ -51,6 +53,7 @@ What it leaves out is in [10-not-in-scope.md](10-not-in-scope.md).
 | [09-existing-engines.md](09-existing-engines.md) | How the terms map onto the engines that already exist |
 | [10-not-in-scope.md](10-not-in-scope.md) | What Walter doesn't model yet |
 | [11-lp-classes.md](11-lp-classes.md) | LP classes: their terms, distributions, clawback and fees |
+| [12-reporting.md](12-reporting.md) | Which result fills which row of the ILPA Reporting and Performance Templates |
 
 ## Conformance language
 
@@ -60,12 +63,18 @@ right until the disagreement is fixed in a pull request that says which one was 
 
 ## Versioning
 
-The terms, flows and result documents each carry a version, `"walter": "0.2"`. A change that
+The terms, flows and result documents each carry a version, `"walter": "0.3"`. A change that
 alters an expected answer, or the meaning of an existing term, is a new minor version until 1.0.
 Adding a term whose absence keeps today's behaviour is not.
 
 0.2 adds LP classes and changes no 0.1 answer, so 0.1 terms are still valid and run the same. A
 0.2 engine accepts both and echoes the terms' version in its result. The 0.1 vectors stay at 0.1.
+
+0.3 adds to the result (`carry`, and `recognized` and `unapplied` on each fee period) and widens
+the kinds of portfolio-company fee to the ILPA Reporting Template's. No earlier answer changes. It
+is a minor version anyway because it adds vectors a conforming engine must pass, so "supports
+0.2" and "supports 0.3" stay distinct claims. Terms that offset a kind 0.2 doesn't have must say
+0.3, and an engine refuses them otherwise.
 
 ## Licence
 

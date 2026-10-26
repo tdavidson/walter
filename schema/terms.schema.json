@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://hemrock.com/walter/0.2/terms.schema.json",
+  "$id": "https://hemrock.com/walter/0.3/terms.schema.json",
   "title": "Walter terms",
   "description": "One fund's economic terms: partners, LP classes, the distribution waterfall, clawback, recycling and the management fee.",
   "type": "object",
@@ -15,7 +15,8 @@
     "walter": {
       "enum": [
         "0.1",
-        "0.2"
+        "0.2",
+        "0.3"
       ]
     },
     "fund": {
@@ -351,19 +352,38 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "transaction": {
+            "advisory": {
               "$ref": "#/$defs/rate"
             },
-            "monitoring": {
+            "broken-deal": {
+              "$ref": "#/$defs/rate"
+            },
+            "transaction": {
               "$ref": "#/$defs/rate"
             },
             "directors": {
               "$ref": "#/$defs/rate"
             },
+            "monitoring": {
+              "$ref": "#/$defs/rate"
+            },
+            "capital-markets": {
+              "$ref": "#/$defs/rate"
+            },
+            "arrangement": {
+              "$ref": "#/$defs/rate"
+            },
+            "origination": {
+              "$ref": "#/$defs/rate"
+            },
+            "reimbursement": {
+              "$ref": "#/$defs/rate"
+            },
             "other": {
               "$ref": "#/$defs/rate"
             }
-          }
+          },
+          "description": "The share of each kind of portfolio-company fee that offsets the fee. 0.1 and 0.2 have transaction, monitoring, directors and other only; the rest need walter \"0.3\"."
         },
         "organizationalExpenseCap": {
           "$ref": "#/$defs/amount"

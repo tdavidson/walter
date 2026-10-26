@@ -1,12 +1,12 @@
 {
-  "walter": "0.2",
+  "walter": "0.3",
   "engine": {
     "name": "Walter reference engine",
-    "version": "0.2.0"
+    "version": "0.3.0"
   },
   "summary": {
-    "vectors": 83,
-    "pass": 83,
+    "vectors": 88,
+    "pass": 88,
     "fail": 0,
     "unsupported": 0
   },
@@ -635,6 +635,53 @@
       "tags": [
         "recycling",
         "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-carry-by-class",
+      "file": "reporting/reporting-carry-by-class.json",
+      "tags": [
+        "reporting",
+        "reporting-carry",
+        "classes"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-carry-paid-and-borne",
+      "file": "reporting/reporting-carry-paid-and-borne.json",
+      "tags": [
+        "reporting",
+        "reporting-carry"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-carry-recipient-bears-carry",
+      "file": "reporting/reporting-carry-recipient-bears-carry.json",
+      "tags": [
+        "reporting",
+        "reporting-carry"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-new-kinds-need-0-3",
+      "file": "reporting/reporting-new-kinds-need-0-3.json",
+      "tags": [
+        "reporting",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-offsets-recognized-by-kind",
+      "file": "reporting/reporting-offsets-recognized-by-kind.json",
+      "tags": [
+        "reporting",
+        "reporting-offsets",
+        "fees-offsets"
       ],
       "status": "pass"
     },

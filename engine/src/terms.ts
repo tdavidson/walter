@@ -2,7 +2,7 @@
 
 import { D, ONE, ZERO, dec, type Dec } from './decimal.ts'
 import { fail } from './errors.ts'
-import type { FeeStep, LpClass, Partner, Purpose, Terms, Tier } from './types.ts'
+import { PORTFOLIO_FEE_KINDS_0_2, type FeeStep, type LpClass, type Partner, type PortfolioFeeKind, type Purpose, type Terms, type Tier } from './types.ts'
 
 export interface NormalizedTier {
   type: Tier['type']
@@ -82,8 +82,13 @@ const fraction = (v: string | undefined, what: string, opts: { allowOne?: boolea
 }
 
 export function normalizeTerms(terms: Terms): NormalizedTerms {
-  if (!terms || (terms.walter !== '0.1' && terms.walter !== '0.2')) fail('invalid-terms', 'terms.walter must be "0.1" or "0.2"')
-  if (terms.classes && terms.walter === '0.1') fail('invalid-terms', 'LP classes need walter "0.2"')
+  if (!terms || !['0.1', '0.2', '0.3'].includes(terms.walter)) fail('invalid-terms', 'terms.walter must be "0.1", "0.2" or "0.3"')
+  if (terms.classes && terms.walter === '0.1') fail('invalid-terms', 'LP classes need walter "0.2" or later')
+  for (const kind of Object.keys(terms.managementFee?.offsets ?? {})) {
+    if (terms.walter !== '0.3' && !PORTFOLIO_FEE_KINDS_0_2.includes(kind as PortfolioFeeKind)) {
+      fail('invalid-terms', `managementFee.offsets.${kind} needs walter "0.3"`)
+    }
+  }
   const minorUnits = terms.fund?.minorUnits ?? 2
   if (!Array.isArray(terms.partners) || terms.partners.length === 0) fail('invalid-terms', 'at least one partner is required')
 
