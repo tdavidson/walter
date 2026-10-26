@@ -36,8 +36,9 @@ Known differences:
   own carry terms and a subordinated flag (`LpWaterfallTerms`). LPs on identical terms run as one
   group (`groupLpsByTerms`), which is a Walter class, and the conformance adapter maps each
   class's partners onto them. A class's fee rates are a fee group (`feeSchedule` `groups`). The
-  app's side-letter fee rate (`partner_allocation_terms`, `rate_override`) still re-splits the
-  fund's fee by rate rather than charging a group its own, and nothing in the app sets per-LP
+  app's side-letter fee rate (`partner_allocation_terms`, `rate_override`) is one too: each
+  override rate replaces the schedule's on every step that charges a fee, so a lower rate lowers
+  the fund's fee rather than moving it onto the other partners. Nothing in the app sets per-LP
   waterfall terms yet.
 
 ## The fund economics tool
@@ -68,11 +69,11 @@ Known differences:
 - LP classes (`features.lpClasses`) map onto `classes`, with differences below.
 
 The engine runs each class's own waterfall (`runClassWaterfalls`) and a class's own fee steps,
-and passes the `classes` vectors. The tool's quarterly forecast doesn't use it yet: as of
-October 2026 it splits the fund's LP totals across classes after the fact, so a class's pref and
-catch-up overrides are stored but don't change its distributions, its first-loss class gets back
-at most its capital and gives its share of profit to the other classes, and a class's fee is its
-rate on its commitment without the fund's step-downs.
+and passes the `classes` vectors. The tool's quarterly forecast runs the same class waterfalls
+whenever a class has terms of its own (a waterfall override or first loss); classes on the fund's
+terms keep the fund waterfall split by commitment, which gives the same answer. A class's fee
+rate follows the fund's step-downs in proportion, and the LP fee total is the sum of the classes'.
+The Excel workbook doesn't model class waterfalls or class fee rates yet.
 
 ## Portfolio forecast
 
