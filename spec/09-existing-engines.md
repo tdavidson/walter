@@ -77,6 +77,7 @@ The Excel workbook doesn't model class waterfalls or class fee rates yet.
 
 ## Portfolio forecast
 
-The forecast now passes every term to the fund engine's waterfall. Deal-by-deal terms still run
-whole-fund in the forecast, with a warning, which is a known difference on the deal-by-deal
-vectors.
+The forecast passes every term to the fund engine's waterfall. Deal-by-deal terms run deal by
+deal when the forecast has the deals (each deal's checks and projected exit); without them they
+run whole fund, with a warning. The forecast has no results file of its own, since its waterfall
+is the accounting engine's.
