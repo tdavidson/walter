@@ -1,0 +1,17 @@
+{
+  "name": "@hemrock/walter",
+  "version": "0.1.0",
+  "description": "Reference engine for the Walter fund economics spec: distribution waterfalls, preferred return, catch-up, recycling, clawback and management fees.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "dependencies": {
+    "decimal.js": "^10.6.0"
+  }
+}

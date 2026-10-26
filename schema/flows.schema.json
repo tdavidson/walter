@@ -1,0 +1,259 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hemrock.com/walter/0.1/flows.schema.json",
+  "title": "Walter flows",
+  "description": "The dated cash flows and events a fund's terms are applied to.",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/flow"
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "amount": {
+      "type": "string",
+      "pattern": "^-?\\d+(\\.\\d+)?$",
+      "description": "A decimal string. Amounts must not be negative; the schema allows a sign so an engine can refuse one with invalid-flow."
+    },
+    "flow": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "partner",
+            "amount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "contribution"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "partner": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            },
+            "purpose": {
+              "enum": [
+                "investments",
+                "fees",
+                "expenses",
+                "other"
+              ],
+              "default": "investments"
+            },
+            "recalled": {
+              "type": "boolean",
+              "description": "A recallable distribution called back. Treated as an ordinary contribution."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "deal",
+            "amount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "investment"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "deal": {
+              "type": "string"
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "amount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "distributable"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            },
+            "deal": {
+              "type": "string",
+              "description": "The deal the proceeds come from. It realizes costExited of the deal's cost."
+            },
+            "costExited": {
+              "$ref": "#/$defs/amount"
+            },
+            "recycle": {
+              "type": "object",
+              "required": [
+                "amount"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "amount": {
+                  "$ref": "#/$defs/amount"
+                },
+                "treatment": {
+                  "enum": [
+                    "never-distributed",
+                    "deemed"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "deal"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "write-off"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "deal": {
+              "type": "string"
+            },
+            "costExited": {
+              "$ref": "#/$defs/amount"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "amount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "nav"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "kind",
+            "amount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "portfolio-fee"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "kind": {
+              "enum": [
+                "transaction",
+                "monitoring",
+                "directors",
+                "other"
+              ]
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "amount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "organizational-expense"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "amount": {
+              "$ref": "#/$defs/amount"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date",
+            "name"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "event"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "date"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "const": "fund-end"
+            },
+            "date": {
+              "$ref": "#/$defs/date"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
