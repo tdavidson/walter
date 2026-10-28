@@ -1,12 +1,12 @@
 {
-  "walter": "0.2",
+  "walter": "0.3",
   "engine": {
     "name": "Hemrock Portfolio accounting",
     "version": "@portfolio/fund-engine 0.2.0"
   },
   "summary": {
-    "vectors": 88,
-    "pass": 88,
+    "vectors": 95,
+    "pass": 95,
     "fail": 0,
     "unsupported": 0
   },
@@ -308,6 +308,54 @@
       "file": "vectors/clawback/clawback-early-carry.json",
       "tags": [
         "clawback",
+        "pref-contributed",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-escrow-covers-clawback",
+      "file": "vectors/clawback/clawback-escrow-covers-clawback.json",
+      "tags": [
+        "clawback",
+        "escrow",
+        "pref-contributed",
+        "catch-up-full"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-escrow-needs-0-3",
+      "file": "vectors/clawback/clawback-escrow-needs-0-3.json",
+      "tags": [
+        "escrow",
+        "errors"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-escrow-released-at-fund-end",
+      "file": "vectors/clawback/clawback-escrow-released-at-fund-end.json",
+      "tags": [
+        "clawback",
+        "escrow"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-escrow-released-at-lp-multiple",
+      "file": "vectors/clawback/clawback-escrow-released-at-lp-multiple.json",
+      "tags": [
+        "escrow"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "clawback-net-of-tax",
+      "file": "vectors/clawback/clawback-net-of-tax.json",
+      "tags": [
+        "clawback",
+        "clawback-net-of-tax",
         "pref-contributed",
         "catch-up-full"
       ],
@@ -639,6 +687,16 @@
       "status": "pass"
     },
     {
+      "id": "reporting-accrued-carry-by-partner",
+      "file": "vectors/reporting/reporting-accrued-carry-by-partner.json",
+      "tags": [
+        "reporting",
+        "accrued-carry",
+        "accrued-carry-by-partner"
+      ],
+      "status": "pass"
+    },
+    {
       "id": "reporting-carry-by-class",
       "file": "vectors/reporting/reporting-carry-by-class.json",
       "tags": [
@@ -663,6 +721,16 @@
       "tags": [
         "reporting",
         "reporting-carry"
+      ],
+      "status": "pass"
+    },
+    {
+      "id": "reporting-fees-by-partner",
+      "file": "vectors/reporting/reporting-fees-by-partner.json",
+      "tags": [
+        "reporting",
+        "fees",
+        "fees-by-partner"
       ],
       "status": "pass"
     },
