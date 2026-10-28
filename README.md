@@ -3,12 +3,12 @@
 An open spec for venture fund economics: how a distribution is split between the LPs and the GP,
 what the preferred return is on a given day, how recycled proceeds are booked, what the GP gives
 back at fund end, and what the management fee comes to. It comes with test vectors and a
-reference engine, so a claim like "supports Walter 0.2" is something anyone can check.
+reference engine, so a claim like "supports Walter 0.3" is something anyone can check.
 
 ```
 spec/      the spec, one page per section; start at spec/00-overview.md
 schema/    JSON Schemas for terms, flows, results and vectors (draft 2020-12)
-vectors/   83 test vectors, one JSON file each, grouped by what they test
+vectors/   88 test vectors, one JSON file each, grouped by what they test
 engine/    the TypeScript reference engine, @hemrock/walter
 runner/    runs any engine against the vectors and builds COMPATIBILITY.md
 results/   each engine's results.json
@@ -30,7 +30,7 @@ reference engine exists to show the vectors are consistent with each other.
 
 ```json
 {
-  "walter": "0.2",
+  "walter": "0.3",
   "fund": { "id": "example-fund-i", "currency": "USD" },
   "partners": [
     { "id": "gp", "role": "gp", "commitment": "2000000" },
@@ -50,8 +50,9 @@ reference engine exists to show the vectors are consistent with each other.
 ```
 
 Flows are a dated list of contributions, investments, proceeds, write-offs, NAVs and fee income.
-The engine returns every line of every distribution by tier and partner, the clawback, carry
-accrued at each NAV, and the management fee by period.
+The engine returns every line of every distribution by tier and partner, the clawback and any
+carry held in escrow, carry accrued at each NAV by partner, and the management fee by period and
+partner.
 
 ## Using the reference engine
 

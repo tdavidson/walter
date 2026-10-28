@@ -9,10 +9,12 @@ An engine returns a document like [`schema/result.schema.json`](../schema/result
 | `allocations` | Every non-zero line: `date`, `tier` (a tier id, or `carry-free`, `recycled` or `clawback`), `partner`, `amount` |
 | `recontributions` | Deemed recycling's contributions, by partner |
 | `recycled` | Each recycle: date, amount, treatment |
-| `clawback` | At a `fund-end`: `paid`, `entitlement`, `amount` |
-| `accruedCarry` | At each `nav`: `nav`, `entitlement`, `paid`, `accrued` |
-| `fees`, `feesByPartner` | Management fee periods, and the net total by partner |
-| `totals` | Each partner's `contributed`, `distributed` (clawback included) and `net` |
+| `clawback` | At a `fund-end`: `paid`, `entitlement`, `amount`, and from 0.3 the net-of-tax `cap` and the part paid `fromEscrow` |
+| `accruedCarry` | At each `nav`: `nav`, `entitlement`, `paid`, `accrued`, and from 0.3 `byPartner` |
+| `carry` | 0.3: the carry in each distribution, credited to its recipients and charged to the partners who bore it ([12-reporting.md](12-reporting.md)) |
+| `escrow` | 0.3: carry escrow by recipient, held (negative) and released (positive) |
+| `fees`, `feesByPartner` | Management fee periods (from 0.3 with the offset `recognized` by kind, the `unapplied` balance and the net fee `byPartner`), and the net total by partner |
+| `totals` | Each partner's `contributed`, `distributed` (clawback and escrow included) and `net` |
 | `warnings` | Anything worth a person's attention that isn't a refusal |
 
 An engine may return only the parts it supports. A vector checks only the parts it states.
@@ -47,9 +49,14 @@ What `expected` can hold, and how it's compared:
 - `allocations`: summed by date, tier and partner, and compared both ways. A listed line the
   engine doesn't produce fails, and so does a non-zero line the engine produces that isn't listed.
 - `totals`: each partner's total distributed.
-- `clawback`: `amount`, and `entitlement` when given. `null` means there must be no clawback.
-- `accruedCarry`: the entitlement at each listed date.
-- `fees`: every period's gross, offset and net, and the number of periods.
+- `clawback`: `amount`, and `entitlement`, `cap` and `fromEscrow` when given. `null` means there
+  must be no clawback.
+- `accruedCarry`: the entitlement at each listed date, and `byPartner` when given, compared both
+  ways.
+- `fees`: every period's gross, offset and net, and the number of periods. With `recognized`,
+  every listed kind is compared, and a kind the engine reports that isn't listed must be zero;
+  `unapplied` when given; `byPartner` when given, compared both ways.
+- `carry` and `escrow`: summed by date and partner and compared both ways, like `allocations`.
 - `recontributions`: by date and partner.
 - `error`: the refusal code the engine must raise.
 

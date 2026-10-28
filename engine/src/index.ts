@@ -5,8 +5,8 @@ import { managementFees } from './fees.ts'
 import { normalizeTerms } from './terms.ts'
 import type { Flow, Result, Terms } from './types.ts'
 
-export const SPEC_VERSION = '0.2'
-export const ENGINE = { name: '@hemrock/walter', version: '0.2.0' }
+export const SPEC_VERSION = '0.3'
+export const ENGINE = { name: '@hemrock/walter', version: '0.3.0' }
 
 export function run(terms: Terms, flows: Flow[]): Result {
   const a = allocate(terms, flows)
@@ -19,3 +19,4 @@ export { allocate } from './allocate.ts'
 export { WalterError } from './errors.ts'
 export { expandPreset, normalizeTerms } from './terms.ts'
 export type * from './types.ts'
+export { PORTFOLIO_FEE_KINDS } from './types.ts'

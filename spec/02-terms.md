@@ -155,6 +155,14 @@ nobody receives it, the terms are refused with `no-carry-recipient`.
 `clawback.enabled` defaults to true. It's evaluated at a `fund-end` flow
 ([06-clawback-and-accrued-carry.md](06-clawback-and-accrued-carry.md)).
 
+| Term | Values | Default | Meaning |
+| --- | --- | --- | --- |
+| `escrow.share` | a fraction, 0 to 1 | | 0.3. The share of each carry payment held in escrow |
+| `escrow.release` | `fund-end`, `{ "lpMultiple": "1.5" }` | `fund-end` | 0.3. When the escrow is paid out |
+| `netOfTax.rate` | a fraction | | 0.3. Caps the clawback at the carry paid less tax at this assumed rate |
+
+Terms that use `escrow` or `netOfTax` must say `"walter": "0.3"`, and are refused otherwise.
+
 ## Recycling
 
 `recycling` holds the limits the LPA sets. Each distribution then says how much of it is recycled

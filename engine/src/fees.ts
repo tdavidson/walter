@@ -21,15 +21,9 @@ import { addMonths, compareDates, daysBetween } from './dates.ts'
 import { fail } from './errors.ts'
 import { apportion } from './rounding.ts'
 import { FUND_CLASS, type NormalizedTerms } from './terms.ts'
-import type { FeeStep, Flow } from './types.ts'
+import type { FeePeriodResult, FeeStep, Flow, OffsetSource } from './types.ts'
 
-export interface FeePeriod {
-  start: string
-  end: string
-  gross: string
-  offset: string
-  net: string
-}
+export type FeePeriod = FeePeriodResult
 
 const MONTHS = { quarterly: 3, semiannual: 6, annual: 12 } as const
 
@@ -112,16 +106,20 @@ export function managementFees(nt: NormalizedTerms, flows: Flow[]): { periods: F
 
   const offsetRates = fee.offsets ?? {}
   const orgCap = fee.organizationalExpenseCap === undefined ? undefined : dec(fee.organizationalExpenseCap)
-  const offsetsIn = (from: string, to: string): Dec => {
-    let o = ZERO
+  // The offset a period earns, by what it was earned from.
+  const offsetsIn = (from: string, to: string): Map<OffsetSource, Dec> => {
+    const o = new Map<OffsetSource, Dec>()
     for (const f of flows) {
       if (f.type !== 'portfolio-fee' || compareDates(f.date, from) < 0 || compareDates(f.date, to) >= 0) continue
-      o = o.plus(dec(f.amount).times(dec(offsetRates[f.kind], ZERO)))
+      const share = dec(offsetRates[f.kind], ZERO)
+      if (share.isZero()) continue
+      o.set(f.kind, (o.get(f.kind) ?? ZERO).plus(dec(f.amount).times(share)))
     }
     if (orgCap) {
       const upTo = (d: string) =>
         sum(flows.filter((f) => f.type === 'organizational-expense' && compareDates(f.date, d) < 0).map((f) => dec((f as { amount: string }).amount)))
-      o = o.plus(pos(upTo(to).minus(orgCap)).minus(pos(upTo(from).minus(orgCap))))
+      const over = pos(upTo(to).minus(orgCap)).minus(pos(upTo(from).minus(orgCap)))
+      if (over.gt(0)) o.set('organizational', over)
     }
     return o
   }
@@ -151,21 +149,40 @@ export function managementFees(nt: NormalizedTerms, flows: Flow[]): { periods: F
     })
     const exactGross = sum(groupGross)
     const gross = exactGross.toDecimalPlaces(mu, D.ROUND_HALF_EVEN)
-    const available = carried.plus(offsetsIn(start, stop))
+    const earned = offsetsIn(start, stop)
+    const available = carried.plus(sum([...earned.values()]))
     const offset = D.min(gross, available).toDecimalPlaces(mu, D.ROUND_HALF_EVEN)
     carried = available.minus(offset)
+    const recognized: FeePeriod['recognized'] = {}
+    for (const [source, amount] of earned) recognized[source] = money(amount.toDecimalPlaces(mu, D.ROUND_HALF_EVEN), mu)
     const net = gross.minus(offset)
     // The offset reduces each group's fee in proportion to it.
+    const parts = new Map<string, Dec>()
     groups.forEach((g, k) => {
       const groupNet = exactGross.isZero() ? ZERO : net.times(groupGross[k]).div(exactGross)
       for (const p of g.members) {
         const part = g.commit.isZero() ? ZERO : groupNet.times(p.commitment).div(g.commit)
+        parts.set(p.id, part)
         owed.set(p.id, (owed.get(p.id) ?? ZERO).plus(part))
       }
     })
+    // The period's net by partner, rounded on its own: the periods need not add to feesByPartner.
+    const byPartner: Record<string, string> = {}
+    apportion(net, feeBearing.map((p) => parts.get(p.id) ?? ZERO), mu).forEach((x, i) => {
+      if (!x.isZero()) byPartner[feeBearing[i].id] = money(x, mu)
+    })
     grossTotal = grossTotal.plus(gross)
     netTotal = netTotal.plus(net)
-    periods.push({ start, end: stop, gross: money(gross, mu), offset: money(offset, mu), net: money(net, mu) })
+    periods.push({
+      start,
+      end: stop,
+      gross: money(gross, mu),
+      offset: money(offset, mu),
+      net: money(net, mu),
+      recognized,
+      unapplied: money(carried.toDecimalPlaces(mu, D.ROUND_HALF_EVEN), mu),
+      byPartner,
+    })
     if (!end && periods.length > 400) fail('invalid-terms', 'managementFee needs an end')
   }
 

@@ -11,7 +11,7 @@ forecasting tool decides the flows, and Walter says who gets what from them.
 | `distributable` | `amount`, `deal`, `costExited`, `recycle` | Cash the fund distributes. With `deal`, it realizes `costExited` of the deal's cost (all that's left, by default). `recycle` holds back part of it ([05-recycling.md](05-recycling.md)) |
 | `write-off` | `deal`, `costExited` | A deal written off: it realizes its cost with no proceeds |
 | `nav` | `amount` | The fund's NAV on the date. It asks for carry accrued, and feeds fees on NAV |
-| `portfolio-fee` | `kind`, `amount` | Fee income from a portfolio company: `transaction`, `monitoring`, `directors` or `other`. It offsets the management fee |
+| `portfolio-fee` | `kind`, `amount` | Fee income from a portfolio company, in the ILPA Reporting Template's categories: `advisory`, `broken-deal`, `transaction`, `directors`, `monitoring`, `capital-markets`, `arrangement`, `origination`, `reimbursement` or `other` (0.1 and 0.2 have transaction, monitoring, directors and other). It offsets the management fee at the share the terms give its kind |
 | `organizational-expense` | `amount` | Organizational expenses incurred, for the fee's expense cap |
 | `event` | `name` | Something a fee step can wait for, such as `successor-fund` |
 | `fund-end` | | The fund's end, where clawback is measured |

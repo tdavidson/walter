@@ -4,6 +4,21 @@ import type { DayCount } from './dates.ts'
 
 export type Purpose = 'investments' | 'fees' | 'expenses' | 'other'
 
+/**
+ * Fee income from a portfolio company, in the ILPA Reporting Template's categories. 0.1 and 0.2
+ * have the first four only (transaction, monitoring, directors, other).
+ */
+export type PortfolioFeeKind = 'advisory' | 'broken-deal' | 'transaction' | 'directors' | 'monitoring' | 'capital-markets' | 'arrangement' | 'origination' | 'reimbursement' | 'other'
+
+export const PORTFOLIO_FEE_KINDS: PortfolioFeeKind[] = [
+  'advisory', 'broken-deal', 'transaction', 'directors', 'monitoring',
+  'capital-markets', 'arrangement', 'origination', 'reimbursement', 'other',
+]
+export const PORTFOLIO_FEE_KINDS_0_2: PortfolioFeeKind[] = ['transaction', 'monitoring', 'directors', 'other']
+
+/** What a period's offsets were earned from: each kind of portfolio-company fee, and expenses over the cap. */
+export type OffsetSource = PortfolioFeeKind | 'organizational'
+
 export interface Source {
   section?: string
   page?: number
@@ -103,7 +118,7 @@ export interface ManagementFee {
   end?: string
   schedule: FeeStep[]
   /** Share of each kind of portfolio-company fee income that reduces the management fee. */
-  offsets?: Partial<Record<'transaction' | 'monitoring' | 'directors' | 'other', string>>
+  offsets?: Partial<Record<PortfolioFeeKind, string>>
   /** Organizational expenses above this amount reduce the fee, dollar for dollar. */
   organizationalExpenseCap?: string
   source?: Source
@@ -123,8 +138,19 @@ export interface Recycling {
 
 export type Treatment = 'never-distributed' | 'deemed'
 
+/**
+ * 0.3: carry escrow (a holdback). Of each carry payment, `share` is held rather than paid. It is
+ * released at fund end, after the clawback is taken from it, or earlier once the carry-bearing LPs
+ * have received `lpMultiple` times what they contributed.
+ */
+export interface CarryEscrow {
+  share: string
+  release?: 'fund-end' | { lpMultiple: string }
+  source?: Source
+}
+
 export interface Terms {
-  walter: '0.1' | '0.2'
+  walter: '0.1' | '0.2' | '0.3'
   fund: {
     id: string
     currency: string
@@ -147,7 +173,14 @@ export interface Terms {
     carryRecipients?: { partner: string; share: string }[]
   }
   /** Default enabled. Evaluated at a `fund-end` flow. */
-  clawback?: { enabled?: boolean; source?: Source }
+  clawback?: {
+    enabled?: boolean
+    /** 0.3: a share of each carry payment held back, to secure the clawback. */
+    escrow?: CarryEscrow
+    /** 0.3: the clawback is capped at the carry paid less tax at this assumed rate. */
+    netOfTax?: { rate: string }
+    source?: Source
+  }
   recycling?: Recycling
   managementFee?: ManagementFee
 }
@@ -166,7 +199,7 @@ export type Flow =
     }
   | { type: 'write-off'; date: string; deal: string; costExited?: string }
   | { type: 'nav'; date: string; amount: string }
-  | { type: 'portfolio-fee'; date: string; kind: 'transaction' | 'monitoring' | 'directors' | 'other'; amount: string }
+  | { type: 'portfolio-fee'; date: string; kind: PortfolioFeeKind; amount: string }
   | { type: 'organizational-expense'; date: string; amount: string }
   | { type: 'event'; date: string; name: string }
   | { type: 'fund-end'; date: string }
@@ -179,15 +212,55 @@ export interface Allocation {
   amount: string
 }
 
+export interface FeePeriodResult {
+  start: string
+  end: string
+  gross: string
+  /** The offset applied: what reduced this period's fee. */
+  offset: string
+  net: string
+  /** 0.3: the offset earned in the period, by source, before any is applied. */
+  recognized?: Partial<Record<OffsetSource, string>>
+  /** 0.3: offset earned but not yet applied, carried to the next period. */
+  unapplied?: string
+  /** 0.3: the period's net fee by fee-bearing partner. */
+  byPartner?: Record<string, string>
+}
+
+export interface ClawbackResult {
+  date: string
+  paid: string
+  entitlement: string
+  amount: string
+  /** 0.3, with `netOfTax`: the cap, the carry paid less the assumed tax on it. */
+  cap?: string
+  /** 0.3, with an escrow: how much of the clawback the escrow covered. */
+  fromEscrow?: string
+}
+
+export interface AccruedCarry {
+  date: string
+  nav: string
+  entitlement: string
+  paid: string
+  accrued: string
+  /** 0.3: the accrued carry by partner: recipients credited (positive), the partners who bear it charged (negative). */
+  byPartner?: Record<string, string>
+}
+
 export interface Result {
-  walter: '0.1' | '0.2'
+  walter: '0.1' | '0.2' | '0.3'
   allocations: Allocation[]
   recontributions: { date: string; partner: string; amount: string }[]
   recycled: { date: string; amount: string; treatment: Treatment }[]
   /** Present when the flows include a `fund-end` and clawback is enabled. */
-  clawback?: { date: string; paid: string; entitlement: string; amount: string }
-  accruedCarry: { date: string; nav: string; entitlement: string; paid: string; accrued: string }[]
-  fees: { start: string; end: string; gross: string; offset: string; net: string }[]
+  clawback?: ClawbackResult
+  accruedCarry: AccruedCarry[]
+  /** 0.3: carry in each distribution, credited to recipients (positive) and charged to the partners who bore it (negative). */
+  carry: { date: string; partner: string; amount: string }[]
+  /** 0.3: carry escrow, by recipient: held (negative) when carry is paid, released (positive). */
+  escrow: { date: string; partner: string; amount: string }[]
+  fees: FeePeriodResult[]
   feesByPartner: Record<string, string>
   totals: Record<string, { contributed: string; distributed: string; net: string }>
   warnings: string[]

@@ -6,10 +6,10 @@ import { compareDates } from './dates.ts'
 import { fail } from './errors.ts'
 import { orderFlows } from './flows.ts'
 import { accruedPreferred, type Dated, type Reduction } from './hurdle.ts'
-import { apportion, roundByPartner } from './rounding.ts'
+import { apportion, largestRemainder, roundByPartner } from './rounding.ts'
 import { normalizeTerms, type NormalizedClass, type NormalizedTerms } from './terms.ts'
 import type { TierContext, WaterfallState } from './tiers/context.ts'
-import type { Allocation, Flow, Purpose, Terms, Treatment } from './types.ts'
+import type { AccruedCarry, Allocation, ClawbackResult, Flow, Purpose, Terms, Treatment } from './types.ts'
 import { cloneState, emptyState, runTiers, type TierResult } from './waterfall.ts'
 
 export interface AllocateOptions {
@@ -24,8 +24,12 @@ export interface AllocateOutput {
   allocations: Allocation[]
   recontributions: { date: string; partner: string; amount: string }[]
   recycled: { date: string; amount: string; treatment: Treatment }[]
-  clawback?: { date: string; paid: string; entitlement: string; amount: string }
-  accruedCarry: { date: string; nav: string; entitlement: string; paid: string; accrued: string }[]
+  clawback?: ClawbackResult
+  accruedCarry: AccruedCarry[]
+  /** Carry paid in each distribution: credited to its recipients, charged to the partners who bore it. */
+  carry: { date: string; partner: string; amount: string }[]
+  /** Carry escrow by recipient: held (negative), released (positive). */
+  escrow: { date: string; partner: string; amount: string }[]
   totals: Record<string, { contributed: string; distributed: string; net: string }>
   warnings: string[]
   /** The GP's share received through the tiers, before any clawback. */
@@ -90,6 +94,9 @@ class Run {
   private investedCost = ZERO
   private readonly deals = new Map<string, Deal>()
   private recycledTotal = ZERO
+  /** Carry held in escrow, by recipient, and whether it has been released for good. */
+  private readonly escrowBalance = new Map<string, Dec>()
+  private escrowReleased = false
   private readonly out: AllocateOutput
 
   constructor(nt: NormalizedTerms, flows: Flow[], opts: AllocateOptions) {
@@ -116,6 +123,8 @@ class Run {
       recontributions: [],
       recycled: [],
       accruedCarry: [],
+      carry: [],
+      escrow: [],
       totals: {},
       warnings: [],
       gpPaid: ZERO,
@@ -142,7 +151,9 @@ class Run {
           if (!this.lifetime) this.accrue(terms, rawFlows, f.date, dec(f.amount))
           break
         case 'fund-end':
-          if (!this.lifetime && this.nt.clawback) this.clawback(terms, rawFlows, f.date)
+          if (this.lifetime) break
+          if (this.nt.clawback) this.clawback(terms, rawFlows, f.date)
+          this.releaseEscrow(f.date)
           break
         default:
           break
@@ -375,12 +386,93 @@ class Run {
       if (l.kind === 'pref') t.pref = t.pref.plus(a)
       today.set(l.book, t)
     })
+    this.bookCarry(date, lines, rounded, w)
+    this.holdEscrow(date, lines, rounded)
     for (const [c, t] of today) {
       c.ws.returned = c.ws.returned.plus(t.roc)
       c.ws.preferredPaid = c.ws.preferredPaid.plus(t.pref)
       c.ws.lp = c.ws.lp.plus(t.lp)
       if (t.lp.gt(0)) c.lpDistributions.push({ date, amount: t.lp })
       if (t.roc.gt(0) || t.pref.gt(0)) c.reductions.push({ date, capital: t.roc, preferred: t.pref })
+    }
+  }
+
+  /**
+   * The carry in one distribution, from both sides: each recipient is credited what it received
+   * through the tiers' GP share, and each class's carry is charged to that class's carry-bearing
+   * partners by the same weights their own lines were split by. A partner on both sides is shown
+   * net, so the lines for a distribution add up to zero.
+   */
+  private bookCarry(date: string, lines: { partner: string; gp: boolean; book?: ClassBook }[], rounded: Dec[], w: Dec[]) {
+    const net = new Map<string, Dec>()
+    const add = (id: string, x: Dec) => net.set(id, (net.get(id) ?? ZERO).plus(x))
+    const byBook = new Map<ClassBook, Dec>()
+    lines.forEach((l, i) => {
+      if (!l.gp || !l.book || rounded[i].isZero()) return
+      add(l.partner, rounded[i])
+      byBook.set(l.book, (byBook.get(l.book) ?? ZERO).plus(rounded[i]))
+    })
+    for (const [book, total] of byBook) {
+      const shares = apportion(total, book.members.map((i) => w[i]), this.mu)
+      book.members.forEach((i, k) => add(this.nt.partners[i].id, shares[k].neg()))
+    }
+    for (const p of this.nt.partners) {
+      const x = net.get(p.id)
+      if (x && !x.isZero()) this.out.carry.push({ date, partner: p.id, amount: money(x, this.mu) })
+    }
+  }
+
+  /**
+   * Carry escrow: of what each recipient received through the tiers' GP share in this distribution,
+   * the escrow share is held instead of paid. Under an `lpMultiple` release, once the carry-bearing
+   * LPs have received that multiple of what they contributed, the balance is released and nothing
+   * more is held.
+   */
+  private holdEscrow(date: string, lines: { partner: string; gp: boolean }[], rounded: Dec[]) {
+    const e = this.nt.escrow
+    if (!e || this.lifetime || this.escrowReleased) return
+    const net = new Map<string, Dec>()
+    for (const r of this.nt.recipients) {
+      const carry = sum(lines.map((l, i) => (l.gp && l.partner === r.partner ? rounded[i] : ZERO)))
+      const held = carry.times(e.share).toDecimalPlaces(this.mu, D.ROUND_HALF_EVEN)
+      if (held.isZero()) continue
+      this.escrowBalance.set(r.partner, (this.escrowBalance.get(r.partner) ?? ZERO).plus(held))
+      net.set(r.partner, held.neg())
+    }
+    if (e.lpMultiple) {
+      const lps = this.nt.partners.filter((p) => p.carryBearing && p.role === 'lp').map((p) => this.books.get(p.id)!)
+      const contributed = sum(lps.map((b) => b.contributed))
+      const distributed = sum(lps.map((b) => b.distributed))
+      if (contributed.gt(0) && distributed.gte(contributed.times(e.lpMultiple))) {
+        for (const [id, x] of this.takeEscrow()) net.set(id, (net.get(id) ?? ZERO).plus(x))
+        this.escrowReleased = true
+      }
+    }
+    this.bookEscrow(date, net)
+  }
+
+  /** Every recipient's escrow balance, emptied. */
+  private takeEscrow(): Map<string, Dec> {
+    const out = new Map<string, Dec>()
+    for (const [id, x] of this.escrowBalance) if (!x.isZero()) out.set(id, x)
+    this.escrowBalance.clear()
+    return out
+  }
+
+  /** Release what is still held, at fund end. The clawback has already been measured. */
+  private releaseEscrow(date: string) {
+    if (!this.nt.escrow) return
+    this.bookEscrow(date, this.takeEscrow())
+    this.escrowReleased = true
+  }
+
+  private bookEscrow(date: string, net: Map<string, Dec>) {
+    for (const r of this.nt.recipients) {
+      const x = net.get(r.partner)
+      if (!x || x.isZero()) continue
+      this.out.escrow.push({ date, partner: r.partner, amount: money(x, this.mu) })
+      const b = this.books.get(r.partner)!
+      b.distributed = b.distributed.plus(x)
     }
   }
 
@@ -477,15 +569,48 @@ class Run {
 
   /** Carry accrued at a NAV: what the GP would be entitled to if the fund liquidated at it today. */
   private accrue(terms: Terms, rawFlows: Flow[], date: string, nav: Dec) {
-    const entitlement = this.entitlement(terms, rawFlows, date, nav).total.toDecimalPlaces(this.mu)
+    const ent = this.entitlement(terms, rawFlows, date, nav)
+    const entitlement = ent.total.toDecimalPlaces(this.mu)
     const paid = this.gpPaid()
+    const accrued = entitlement.minus(paid)
     this.out.accruedCarry.push({
       date,
       nav: money(nav, this.mu),
       entitlement: money(entitlement, this.mu),
       paid: money(paid, this.mu),
-      accrued: money(entitlement.minus(paid), this.mu),
+      accrued: money(accrued, this.mu),
+      byPartner: this.accruedByPartner(accrued, ent.byClass),
     })
+  }
+
+  /**
+   * The accrued carry from both sides, the way `carry` shows carry paid: the recipients are credited
+   * it by their shares, and each class's accrual (its entitlement less what its tiers have paid the
+   * GP) is charged to its carry-bearing partners by capital. A partner on both sides is shown net.
+   */
+  private accruedByPartner(accrued: Dec, byClass: Map<string, Dec>): Record<string, string> {
+    const net = new Map<string, Dec>()
+    const add = (id: string, x: Dec) => net.set(id, (net.get(id) ?? ZERO).plus(x))
+    const recips = this.nt.recipients
+    apportion(accrued, recips.map((r) => r.share), this.mu).forEach((x, i) => add(recips[i].partner, x))
+    const members: string[] = []
+    const exact: Dec[] = []
+    for (const c of this.classBooks) {
+      const classAccrued = (byClass.get(c.cls.id) ?? ZERO).minus(c.ws.gp)
+      const capital = c.members.map((i) => this.books.get(this.nt.partners[i].id)!.capital)
+      const classCapital = sum(capital)
+      c.members.forEach((i, k) => {
+        members.push(this.nt.partners[i].id)
+        exact.push(classCapital.isZero() ? classAccrued.div(c.members.length) : classAccrued.times(capital[k]).div(classCapital))
+      })
+    }
+    largestRemainder(exact, accrued, this.mu).forEach((x, i) => add(members[i], x.neg()))
+    const out: Record<string, string> = {}
+    for (const p of this.nt.partners) {
+      const x = net.get(p.id)
+      if (x && !x.isZero()) out[p.id] = money(x, this.mu)
+    }
+    return out
   }
 
   /**
@@ -498,16 +623,23 @@ class Run {
     const ent = this.entitlement(terms, rawFlows, date)
     const entitlement = ent.total.toDecimalPlaces(this.mu)
     const paid = this.gpPaid()
-    const amount = pos(paid.minus(entitlement))
+    // Net of tax, the GP never gives back more than it kept after tax on what it was paid.
+    const cap = this.nt.netOfTaxRate ? paid.times(ONE.minus(this.nt.netOfTaxRate)).toDecimalPlaces(this.mu, D.ROUND_HALF_EVEN) : undefined
+    const amount = cap ? min(cap, pos(paid.minus(entitlement))) : pos(paid.minus(entitlement))
+    const recips = this.nt.recipients
+    const repay = apportion(amount, recips.map((r) => r.share), this.mu)
     this.out.clawback = {
       date,
       paid: money(paid, this.mu),
       entitlement: money(entitlement, this.mu),
       amount: money(amount, this.mu),
+      ...(cap ? { cap: money(cap, this.mu) } : {}),
+      // The escrow covers each recipient's repayment as far as its balance goes.
+      ...(this.nt.escrow
+        ? { fromEscrow: money(sum(recips.map((r, i) => min(repay[i], this.escrowBalance.get(r.partner) ?? ZERO))), this.mu) }
+        : {}),
     }
     if (amount.isZero()) return
-    const recips = this.nt.recipients
-    const repay = apportion(amount, recips.map((r) => r.share), this.mu)
     recips.forEach((r, i) => {
       this.out.allocations.push({ date, tier: 'clawback', partner: r.partner, amount: money(repay[i].neg(), this.mu) })
       const b = this.books.get(r.partner)!

@@ -2,7 +2,7 @@
 
 import { D, ONE, ZERO, dec, type Dec } from './decimal.ts'
 import { fail } from './errors.ts'
-import type { FeeStep, LpClass, Partner, Purpose, Terms, Tier } from './types.ts'
+import { PORTFOLIO_FEE_KINDS_0_2, type FeeStep, type LpClass, type Partner, type PortfolioFeeKind, type Purpose, type Terms, type Tier } from './types.ts'
 
 export interface NormalizedTier {
   type: Tier['type']
@@ -50,6 +50,10 @@ export interface NormalizedTerms {
   classes: NormalizedClass[]
   recipients: { partner: string; share: Dec }[]
   clawback: boolean
+  /** Carry escrow (0.3). */
+  escrow?: { share: Dec; lpMultiple?: Dec }
+  /** The assumed tax rate a net-of-tax clawback cap deducts (0.3). */
+  netOfTaxRate?: Dec
 }
 
 export const FUND_CLASS = ''
@@ -82,8 +86,13 @@ const fraction = (v: string | undefined, what: string, opts: { allowOne?: boolea
 }
 
 export function normalizeTerms(terms: Terms): NormalizedTerms {
-  if (!terms || (terms.walter !== '0.1' && terms.walter !== '0.2')) fail('invalid-terms', 'terms.walter must be "0.1" or "0.2"')
-  if (terms.classes && terms.walter === '0.1') fail('invalid-terms', 'LP classes need walter "0.2"')
+  if (!terms || !['0.1', '0.2', '0.3'].includes(terms.walter)) fail('invalid-terms', 'terms.walter must be "0.1", "0.2" or "0.3"')
+  if (terms.classes && terms.walter === '0.1') fail('invalid-terms', 'LP classes need walter "0.2" or later')
+  for (const kind of Object.keys(terms.managementFee?.offsets ?? {})) {
+    if (terms.walter !== '0.3' && !PORTFOLIO_FEE_KINDS_0_2.includes(kind as PortfolioFeeKind)) {
+      fail('invalid-terms', `managementFee.offsets.${kind} needs walter "0.3"`)
+    }
+  }
   const minorUnits = terms.fund?.minorUnits ?? 2
   if (!Array.isArray(terms.partners) || terms.partners.length === 0) fail('invalid-terms', 'at least one partner is required')
 
@@ -139,6 +148,20 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
   const paysGp = classes.some((c) => c.tiers.some((t) => t.type === 'catch-up' || (t.type === 'split' && t.gpShare.gt(0))))
   if (paysGp && recipients.length === 0) fail('no-carry-recipient', 'name carryRecipients, or list exactly one gp partner')
 
+  const cb = terms.clawback ?? {}
+  if ((cb.escrow || cb.netOfTax) && terms.walter !== '0.3') fail('invalid-terms', 'a carry escrow or a net-of-tax clawback needs walter "0.3"')
+  let escrow: NormalizedTerms['escrow']
+  if (cb.escrow) {
+    const release = cb.escrow.release ?? 'fund-end'
+    if (release !== 'fund-end' && (typeof release !== 'object' || release.lpMultiple === undefined)) {
+      fail('invalid-terms', 'clawback.escrow.release must be "fund-end" or { lpMultiple }')
+    }
+    const lpMultiple = typeof release === 'object' ? dec(release.lpMultiple) : undefined
+    if (lpMultiple && lpMultiple.lte(0)) fail('invalid-terms', 'clawback.escrow.release.lpMultiple must be above 0')
+    escrow = { share: fraction(cb.escrow.share, 'clawback.escrow.share', { allowOne: true }), ...(lpMultiple ? { lpMultiple } : {}) }
+  }
+  const netOfTaxRate = cb.netOfTax ? fraction(cb.netOfTax.rate, 'clawback.netOfTax.rate') : undefined
+
   return {
     raw: terms,
     minorUnits,
@@ -148,7 +171,9 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
     tiers,
     classes,
     recipients,
-    clawback: terms.clawback?.enabled ?? true,
+    clawback: cb.enabled ?? true,
+    ...(escrow ? { escrow } : {}),
+    ...(netOfTaxRate ? { netOfTaxRate } : {}),
   }
 }
 

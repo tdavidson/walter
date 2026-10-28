@@ -113,7 +113,9 @@ test('carry accrued is the entitlement less what has been paid', () => {
     { type: 'distributable', date: '2026-01-01', amount: '1500' },
     { type: 'nav', date: '2027-01-01', amount: '500' },
   ])
-  assert.deepEqual(res.accruedCarry, [{ date: '2027-01-01', nav: '500.00', entitlement: '200.00', paid: '100.00', accrued: '100.00' }])
+  assert.deepEqual(res.accruedCarry, [
+    { date: '2027-01-01', nav: '500.00', entitlement: '200.00', paid: '100.00', accrued: '100.00', byPartner: { 'lp-a': '-100.00', gp: '100.00' } },
+  ])
 })
 
 test('putting every partner in one class with no terms of its own changes no 0.1 answer', async () => {
