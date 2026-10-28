@@ -279,6 +279,57 @@
           "type": "boolean",
           "default": true
         },
+        "escrow": {
+          "type": "object",
+          "description": "0.3. A share of each carry payment held back to secure the clawback, and when it is released.",
+          "required": [
+            "share"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "share": {
+              "$ref": "#/$defs/rate",
+              "description": "The share of each carry payment held, 0 to 1."
+            },
+            "release": {
+              "default": "fund-end",
+              "oneOf": [
+                {
+                  "const": "fund-end"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "lpMultiple"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "lpMultiple": {
+                      "$ref": "#/$defs/amount",
+                      "description": "Released once the carry-bearing LPs have received this multiple of what they contributed."
+                    }
+                  }
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/source"
+            }
+          }
+        },
+        "netOfTax": {
+          "type": "object",
+          "description": "0.3. The clawback is capped at the carry paid less tax on it at this assumed rate.",
+          "required": [
+            "rate"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "rate": {
+              "$ref": "#/$defs/rate"
+            }
+          }
+        },
         "source": {
           "$ref": "#/$defs/source"
         }

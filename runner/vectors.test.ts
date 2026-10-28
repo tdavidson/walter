@@ -92,3 +92,17 @@ test('carry lines add up to zero on every date, and credit only carry recipients
     for (const [date, total] of byDate) assert.equal(total, 0, `${v.id} on ${date}`)
   }
 })
+
+test('accrued carry by partner adds up to zero, and escrow held is all released by fund end', () => {
+  for (const v of vectors) {
+    if (v.expected.error) continue
+    const res = run(structuredClone(v.terms) as any, structuredClone(v.flows) as any)
+    for (const a of res.accruedCarry) {
+      const total = Object.values(a.byPartner ?? {}).reduce((s, x) => s + Number(x), 0)
+      assert.equal(Math.round(total * 100) / 100, 0, `${v.id} on ${a.date}`)
+    }
+    if (!(v.flows as any[]).some((f) => f.type === 'fund-end')) continue
+    const left = res.escrow.reduce((s, e) => s + Number(e.amount), 0)
+    assert.equal(Math.round(left * 100) / 100, 0, `${v.id}: escrow left at fund end`)
+  }
+})

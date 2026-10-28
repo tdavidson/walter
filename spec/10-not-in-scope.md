@@ -8,8 +8,8 @@ still out listed there.
 | Provision | Why it's out |
 | --- | --- |
 | Tax distributions | They depend on each partner's tax position |
-| Carry escrow and holdbacks | Worth a flag on the terms first, then a vector or two |
-| A clawback capped net of tax | Same as escrow: a term and a vector once the wording is settled |
+| Escrow released on a coverage ratio, or earning interest | 0.3 releases at fund end or at an LP multiple only |
+| A clawback net of each partner's actual tax | 0.3 caps it at an assumed rate |
 | Interim clawback (before fund end) | Rare, and LPAs word it very differently |
 | GP removal provisions | Not a computation |
 | Hurdle compounding other than annual (quarterly, daily) | Easy to add as `compounding` values; no LPA in front of us uses one yet |
@@ -23,7 +23,6 @@ The ILPA mapping is in [12-reporting.md](12-reporting.md). What it leaves to the
 
 | Row or figure | Why it's out |
 | --- | --- |
-| Each partner's management fee by window | `feesByPartner` is the whole schedule; per period by partner would be a new result field |
-| Carry accrued by partner | The fund-end run would have to be done per partner |
+| Each partner's gross fee and offset by period | `fees[].byPartner` splits the net only |
 | Offsets to expenses, rebates and waivers | Walter's offsets reduce the management fee only |
 | Subscription facility flows | Credit facilities aren't modelled; the Performance Template's "with" and "without" returns are the same |

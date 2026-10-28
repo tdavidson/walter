@@ -73,7 +73,10 @@ also has `recognized`, the offset it earned before any was applied, keyed by the
 came from or `organizational` for expenses over the cap and each rounded to the minor unit, half to
 even; and `unapplied`, the offset still to use at the period's end, rounded the same way. `offset`
 is what was applied. ILPA reports all three ([12-reporting.md](12-reporting.md)). `feesByPartner` splits the
-total net fee across the fee-bearing partners by commitment, by largest remainder.
+total net fee across the fee-bearing partners by commitment, by largest remainder. From 0.3 each
+period also has `byPartner`, that period's net split the same way. Each period is rounded on its
+own, so a partner's periods can differ from its `feesByPartner` total by a cent. Vector:
+`reporting-fees-by-partner`.
 
 ## LP classes
 

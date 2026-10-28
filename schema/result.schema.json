@@ -110,6 +110,14 @@
         },
         "amount": {
           "$ref": "#/$defs/money"
+        },
+        "cap": {
+          "$ref": "#/$defs/money",
+          "description": "0.3, with netOfTax: the carry paid less the assumed tax on it."
+        },
+        "fromEscrow": {
+          "$ref": "#/$defs/money",
+          "description": "0.3, with an escrow: how much of the clawback the escrow covered."
         }
       }
     },
@@ -139,6 +147,13 @@
           },
           "accrued": {
             "$ref": "#/$defs/money"
+          },
+          "byPartner": {
+            "type": "object",
+            "description": "0.3. The accrued carry by partner: recipients credited (positive), the partners who bear it charged (negative). Adds up to zero.",
+            "additionalProperties": {
+              "$ref": "#/$defs/money"
+            }
           }
         }
       }
@@ -146,6 +161,29 @@
     "carry": {
       "type": "array",
       "description": "0.3. The carry in each distribution: credited to each recipient (positive) and charged to the partners who bore it (negative). The lines for a distribution add up to zero.",
+      "items": {
+        "type": "object",
+        "required": [
+          "date",
+          "partner",
+          "amount"
+        ],
+        "properties": {
+          "date": {
+            "$ref": "#/$defs/date"
+          },
+          "partner": {
+            "type": "string"
+          },
+          "amount": {
+            "$ref": "#/$defs/money"
+          }
+        }
+      }
+    },
+    "escrow": {
+      "type": "array",
+      "description": "0.3. Carry escrow by recipient: held when carry is paid (negative), released (positive).",
       "items": {
         "type": "object",
         "required": [
@@ -219,6 +257,13 @@
           "unapplied": {
             "$ref": "#/$defs/money",
             "description": "0.3. Offset earned but not yet applied at the period's end, carried to the next."
+          },
+          "byPartner": {
+            "type": "object",
+            "description": "0.3. The period's net fee by fee-bearing partner.",
+            "additionalProperties": {
+              "$ref": "#/$defs/money"
+            }
           }
         }
       }

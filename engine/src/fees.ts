@@ -157,12 +157,19 @@ export function managementFees(nt: NormalizedTerms, flows: Flow[]): { periods: F
     for (const [source, amount] of earned) recognized[source] = money(amount.toDecimalPlaces(mu, D.ROUND_HALF_EVEN), mu)
     const net = gross.minus(offset)
     // The offset reduces each group's fee in proportion to it.
+    const parts = new Map<string, Dec>()
     groups.forEach((g, k) => {
       const groupNet = exactGross.isZero() ? ZERO : net.times(groupGross[k]).div(exactGross)
       for (const p of g.members) {
         const part = g.commit.isZero() ? ZERO : groupNet.times(p.commitment).div(g.commit)
+        parts.set(p.id, part)
         owed.set(p.id, (owed.get(p.id) ?? ZERO).plus(part))
       }
+    })
+    // The period's net by partner, rounded on its own: the periods need not add to feesByPartner.
+    const byPartner: Record<string, string> = {}
+    apportion(net, feeBearing.map((p) => parts.get(p.id) ?? ZERO), mu).forEach((x, i) => {
+      if (!x.isZero()) byPartner[feeBearing[i].id] = money(x, mu)
     })
     grossTotal = grossTotal.plus(gross)
     netTotal = netTotal.plus(net)
@@ -174,6 +181,7 @@ export function managementFees(nt: NormalizedTerms, flows: Flow[]): { periods: F
       net: money(net, mu),
       recognized,
       unapplied: money(carried.toDecimalPlaces(mu, D.ROUND_HALF_EVEN), mu),
+      byPartner,
     })
     if (!end && periods.length > 400) fail('invalid-terms', 'managementFee needs an end')
   }

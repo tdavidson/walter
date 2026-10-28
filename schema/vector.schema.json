@@ -114,6 +114,14 @@
                 "entitlement": {
                   "type": "string",
                   "pattern": "^-?\\d+(\\.\\d+)?$"
+                },
+                "cap": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                },
+                "fromEscrow": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$"
                 }
               }
             }
@@ -136,6 +144,14 @@
               "entitlement": {
                 "type": "string",
                 "pattern": "^-?\\d+(\\.\\d+)?$"
+              },
+              "byPartner": {
+                "type": "object",
+                "description": "Compared both ways, like carry: a partner the engine reports that isn't listed must be zero.",
+                "additionalProperties": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                }
               }
             }
           }
@@ -179,6 +195,14 @@
               "unapplied": {
                 "type": "string",
                 "pattern": "^-?\\d+(\\.\\d+)?$"
+              },
+              "byPartner": {
+                "type": "object",
+                "description": "The period's net fee by partner. Compared both ways.",
+                "additionalProperties": {
+                  "type": "string",
+                  "pattern": "^-?\\d+(\\.\\d+)?$"
+                }
               }
             }
           }
@@ -232,6 +256,32 @@
         "carry": {
           "type": "array",
           "description": "Carry lines, summed by date and partner and compared both ways, like allocations.",
+          "items": {
+            "type": "object",
+            "required": [
+              "date",
+              "partner",
+              "amount"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "date": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+              },
+              "partner": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "string",
+                "pattern": "^-?\\d+(\\.\\d+)?$"
+              }
+            }
+          }
+        },
+        "escrow": {
+          "type": "array",
+          "description": "Summed by date and partner and compared both ways, like carry.",
           "items": {
             "type": "object",
             "required": [

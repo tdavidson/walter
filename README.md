@@ -50,8 +50,9 @@ reference engine exists to show the vectors are consistent with each other.
 ```
 
 Flows are a dated list of contributions, investments, proceeds, write-offs, NAVs and fee income.
-The engine returns every line of every distribution by tier and partner, the clawback, carry
-accrued at each NAV, and the management fee by period.
+The engine returns every line of every distribution by tier and partner, the clawback and any
+carry held in escrow, carry accrued at each NAV by partner, and the management fee by period and
+partner.
 
 ## Using the reference engine
 

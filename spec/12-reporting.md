@@ -9,11 +9,17 @@ so, and those rows are the fund's books to fill.
 The templates are ILPA's, and the row labels below are quoted from them. Walter isn't affiliated
 with or endorsed by ILPA.
 
-0.3 added three things to the result so the rows could be filled at all: `carry`, which says who
-paid the carry in each distribution as well as who received it; `fees[].recognized`, the offset
-earned in each period by where it came from; and `fees[].unapplied`, the offset balance carried
-forward. It also widened the kinds of portfolio-company fee to the template's categories. Nothing
-in 0.1 or 0.2 changed meaning.
+0.3 added these to the result so the rows could be filled at all:
+
+- `carry`, which says who paid the carry in each distribution as well as who received it;
+- `fees[].recognized`, the offset earned in each period by where it came from, and
+  `fees[].unapplied`, the offset balance carried forward;
+- `fees[].byPartner`, each period's fee by partner, and `accruedCarry[].byPartner`, the accrued
+  carry by partner;
+- `escrow`, the carry held back and released.
+
+It also widened the kinds of portfolio-company fee to the template's categories. Nothing in 0.1 or
+0.2 changed meaning.
 
 ## Windows and columns
 
@@ -36,10 +42,12 @@ whose `role` is `gp`.
 | Less Offsets to Management Fees (Applied During Period) | `fees[].offset` |
 | (Management Fees – Net of Offsets, Waivers & Rebates) | `fees[].net` |
 
-The fee rows are the fund's. `feesByPartner` gives each partner's net fee over the whole schedule,
-which fills the partner column inception to date; a partner's fee by window isn't in the result
-yet. Walter's offsets only reduce the management fee, so the expense offset rows are zero, and
-rebates and waivers aren't modelled.
+The fee rows are the fund's. The partner column of the net fee row is the sum of the partner's
+`fees[].byPartner` over the periods in the window. Gross and offset aren't split by partner, so
+for those rows the partner column is the partner's share of the period's net, applied to the
+period's gross and offset. `feesByPartner` is the inception-to-date total, rounded once. Walter's
+offsets only reduce the management fee, so the expense offset rows are zero, and rebates and
+waivers aren't modelled.
 
 Contributions with `purpose` `fees` or `expenses` are still contributions here. The template's
 expense rows (legal, audit, administration and the rest) are the fund's books, not the terms.
@@ -88,15 +96,16 @@ template's fund column shows carry, and a limited partner's lines are negative.
 
 | Row | From |
 | --- | --- |
-| Carried Interest Accrued (Unrealized Profits) | `accruedCarry[].accrued` at the NAV on or before the window's end |
+| Carried Interest Accrued (Unrealized Profits) | The partner's `accruedCarry[].byPartner` at the NAV on or before the window's end; the fund's is `accrued` |
 | Carried Interest Earned (Realized Profits, Inclusive of Amount Held in Escrow) | The partner's `carry` lines in the window |
-| Carried Interest – Paid During the Period | The same lines: Walter pays carry when it's earned |
+| Carried Interest – Paid During the Period | The same lines, plus the recipient's `escrow` lines in the window |
 | Returned Clawback | `clawback.amount`, credited to the classes that overpaid as the `clawback` allocations show |
-| Carried Interest: Amount Held in Escrow – Ending Period Balance | Zero: escrow isn't in Walter yet ([10-not-in-scope.md](10-not-in-scope.md)) |
+| Carried Interest: Amount Held in Escrow – Ending Period Balance | The recipient's `escrow` lines to the window's end, negated |
 
-`accruedCarry` is the fund's, the carry the GP would be entitled to if the fund were sold at the
-NAV, less what it has been paid. Splitting it across limited partners would need the same
-fund-end run, per partner; it isn't in 0.3.
+Accrued carry is a balance, not a flow, so its window figure is the change: the accrual at the
+window's end less the accrual at its start. `accruedCarry[].byPartner` charges each class's accrual
+to its carry-bearing partners by capital, so a limited partner's line is negative and a
+recipient's positive, as with `carry` ([06-clawback-and-accrued-carry.md](06-clawback-and-accrued-carry.md)).
 
 ## A.2 The commitment reconciliation
 
@@ -144,7 +153,7 @@ the fund's books to add, and without a facility the "with" and "without" returns
 | Capital Call: Working Capital | `contribution` flows with `purpose` `other` |
 | Distribution: Permanent | Allocations to limited partners, except `recycled` and `clawback` |
 | Distribution: Recallable | `recycled` allocations under the deemed treatment |
-| Carry / Clawback | The recipients' `carry` lines, and the `clawback` allocations to them |
+| Carry / Clawback | The recipients' `carry` lines and `escrow` lines, and the `clawback` allocations to them |
 | Quarter-end Adjustment for Carry Allocation | `accruedCarry[].accrued` at each quarter-end NAV |
 | NAV | `nav` flows |
 
@@ -156,5 +165,6 @@ like any other here, and the template leaves it to the fund whether to include i
 
 The `reporting` group checks what 0.3 added: offsets recognized by kind with the unapplied
 balance, carry paid and borne (with a carry-free GP commit, a GP whose commit bears carry, and two
-classes on different carry), and that a 0.2 document offsetting a 0.3 kind is refused. The rows
-above are arithmetic on those results, so they aren't vectors of their own.
+classes on different carry), each period's fee by partner, accrued carry by partner, and that a 0.2
+document offsetting a 0.3 kind is refused. Escrow is in the `clawback` group. The rows above are
+arithmetic on those results, so they aren't vectors of their own.

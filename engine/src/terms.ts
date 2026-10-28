@@ -50,6 +50,10 @@ export interface NormalizedTerms {
   classes: NormalizedClass[]
   recipients: { partner: string; share: Dec }[]
   clawback: boolean
+  /** Carry escrow (0.3). */
+  escrow?: { share: Dec; lpMultiple?: Dec }
+  /** The assumed tax rate a net-of-tax clawback cap deducts (0.3). */
+  netOfTaxRate?: Dec
 }
 
 export const FUND_CLASS = ''
@@ -144,6 +148,20 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
   const paysGp = classes.some((c) => c.tiers.some((t) => t.type === 'catch-up' || (t.type === 'split' && t.gpShare.gt(0))))
   if (paysGp && recipients.length === 0) fail('no-carry-recipient', 'name carryRecipients, or list exactly one gp partner')
 
+  const cb = terms.clawback ?? {}
+  if ((cb.escrow || cb.netOfTax) && terms.walter !== '0.3') fail('invalid-terms', 'a carry escrow or a net-of-tax clawback needs walter "0.3"')
+  let escrow: NormalizedTerms['escrow']
+  if (cb.escrow) {
+    const release = cb.escrow.release ?? 'fund-end'
+    if (release !== 'fund-end' && (typeof release !== 'object' || release.lpMultiple === undefined)) {
+      fail('invalid-terms', 'clawback.escrow.release must be "fund-end" or { lpMultiple }')
+    }
+    const lpMultiple = typeof release === 'object' ? dec(release.lpMultiple) : undefined
+    if (lpMultiple && lpMultiple.lte(0)) fail('invalid-terms', 'clawback.escrow.release.lpMultiple must be above 0')
+    escrow = { share: fraction(cb.escrow.share, 'clawback.escrow.share', { allowOne: true }), ...(lpMultiple ? { lpMultiple } : {}) }
+  }
+  const netOfTaxRate = cb.netOfTax ? fraction(cb.netOfTax.rate, 'clawback.netOfTax.rate') : undefined
+
   return {
     raw: terms,
     minorUnits,
@@ -153,7 +171,9 @@ export function normalizeTerms(terms: Terms): NormalizedTerms {
     tiers,
     classes,
     recipients,
-    clawback: terms.clawback?.enabled ?? true,
+    clawback: cb.enabled ?? true,
+    ...(escrow ? { escrow } : {}),
+    ...(netOfTaxRate ? { netOfTaxRate } : {}),
   }
 }
 
