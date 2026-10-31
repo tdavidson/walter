@@ -5,10 +5,15 @@ what the preferred return is on a given day, how recycled proceeds are booked, w
 back at fund end, and what the management fee comes to. It comes with test vectors and a
 reference engine, so a claim like "supports Walter 0.3" is something anyone can check.
 
+In plain terms: give Walter a fund's LPA terms and its dated cash flows, and it says who gets
+every dollar, to the cent, along with a worked example for each of the ways LPAs are commonly
+read. Two pieces of software that both pass the vectors will give the same answer on the same
+fund.
+
 ```
 spec/      the spec, one page per section; start at spec/00-overview.md
 schema/    JSON Schemas for terms, flows, results and vectors (draft 2020-12)
-vectors/   88 test vectors, one JSON file each, grouped by what they test
+vectors/   95 test vectors, one JSON file each, grouped by what they test
 engine/    the TypeScript reference engine, @hemrock/walter
 runner/    runs any engine against the vectors and builds COMPATIBILITY.md
 results/   each engine's results.json
@@ -25,6 +30,30 @@ hidden in someone's code.
 
 The vectors are the product. The schema exists so the vectors can be written down, and the
 reference engine exists to show the vectors are consistent with each other.
+
+## Who it's for
+
+- **Teams building fund software** (fund administration, accounting, LP portals, carry and
+  waterfall models). Run the vectors against your engine to find where it reads an LPA differently
+  from everyone else, and publish the compatibility table so customers can see it.
+- **GPs and fund CFOs.** Write your fund's terms as a Walter terms document and every ambiguous
+  choice in the waterfall is spelled out. Hand the same document to your administrator, your
+  auditor and your own model, and they're checking against the same thing.
+- **LPs and their advisers.** Ask a manager or administrator which Walter version their numbers
+  conform to, and recompute a distribution notice yourself with the reference engine.
+- **Fund lawyers.** The spec lists the places LPA language is usually read more than one way.
+  Each `source` field ties a term back to the LPA section and quote it came from.
+
+## How to use it
+
+1. **Read the spec.** Start at [spec/00-overview.md](spec/00-overview.md). Each page is short and
+   says exactly what a term means and how it's computed.
+2. **Write your terms.** Describe the fund's waterfall, recycling, clawback and fees as a terms
+   document (below), or start from a preset. Validate it against
+   [schema/terms.schema.json](schema/terms.schema.json).
+3. **Run it.** Pass the terms and the fund's flows to the reference engine, or to your own engine.
+4. **Check an engine.** Point the runner at any engine and see which vectors it passes, tag by
+   tag, in [COMPATIBILITY.md](COMPATIBILITY.md).
 
 ## A terms document
 
@@ -64,6 +93,8 @@ result.allocations // [{ date, tier, partner, amount }, ...]
 ```
 
 Node 22.18 or later runs the TypeScript source directly. The one dependency is `decimal.js`.
+The package isn't on npm yet, so for now clone this repository and import from
+`engine/src/index.ts`.
 
 ## Running the suite
 
