@@ -14,7 +14,7 @@ From the command line:
 npx walter init                        # example terms.json and flows.json
 npx walter run terms.json flows.json   # distributions, fees and carry by partner
 npx walter run terms.json flows.json --json
-npx walter serve                       # local web API: POST {"terms", "flows"} to http://127.0.0.1:3790/run
+npx walter serve                       # web API: POST {"terms", "flows"} to /run (PORT, HOST, WALTER_API_KEY)
 ```
 
 From code:

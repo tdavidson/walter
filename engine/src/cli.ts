@@ -3,6 +3,7 @@
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:http'
+import { createHash, timingSafeEqual } from 'node:crypto'
 import { run, SPEC_VERSION, ENGINE } from './index.ts'
 import { WalterError } from './errors.ts'
 import type { Flow, Result, Terms } from './types.ts'
@@ -15,7 +16,8 @@ Usage:
   walter run <terms> <flows> --json
                                    print the full result as JSON
   walter serve [--port 3790] [--host 127.0.0.1]
-                                   run a local web API: POST {"terms", "flows"} to /run
+                                   run a web API: POST {"terms", "flows"} to /run
+                                   (PORT, HOST and WALTER_API_KEY can be set in the environment)
 
 <terms> is a Walter terms document. <flows> is a JSON array of dated flows, or a
 document with a "flows" array. The spec: https://github.com/tdavidson/walter`
@@ -139,7 +141,10 @@ function flag(args: string[], name: string): string | undefined {
 
 const MAX_BODY = 10 * 1024 * 1024
 
-function serve(port: number, host: string): void {
+const digest = (s: string) => createHash('sha256').update(s).digest()
+
+function serve(port: number, host: string, apiKey: string | undefined): void {
+  const keyDigest = apiKey ? digest(apiKey) : undefined
   const server = createServer((req, res) => {
     const send = (status: number, body: unknown) => {
       res.writeHead(status, { 'content-type': 'application/json' })
@@ -148,6 +153,13 @@ function serve(port: number, host: string): void {
     const path = (req.url ?? '/').split('?')[0]
     if (req.method === 'GET' && (path === '/' || path === '/health')) {
       return send(200, { engine: ENGINE.name, version: ENGINE.version, walter: SPEC_VERSION, run: 'POST /run' })
+    }
+    if (keyDigest) {
+      const auth = req.headers.authorization ?? ''
+      const given = auth.startsWith('Bearer ') ? auth.slice(7) : ''
+      if (!timingSafeEqual(digest(given), keyDigest)) {
+        return send(401, { error: 'unauthorized', message: 'Send the API key as "Authorization: Bearer <key>"' })
+      }
     }
     if (path !== '/run') return send(404, { error: 'not-found', message: 'POST {"terms", "flows"} to /run' })
     if (req.method !== 'POST') return send(405, { error: 'method-not-allowed', message: 'Use POST' })
@@ -183,7 +195,11 @@ function serve(port: number, host: string): void {
   server.listen(port, host, () => {
     console.log(`Walter ${ENGINE.version} listening on http://${host}:${port}`)
     console.log(`POST {"terms": ..., "flows": [...]} to http://${host}:${port}/run`)
+    if (!keyDigest && host !== '127.0.0.1' && host !== 'localhost') {
+      console.log('Warning: no WALTER_API_KEY is set, so anyone who can reach this address can call /run')
+    }
   })
+  for (const signal of ['SIGINT', 'SIGTERM'] as const) process.on(signal, () => server.close(() => process.exit(0)))
 }
 
 function main(argv: string[]): number {
@@ -223,7 +239,12 @@ function main(argv: string[]): number {
     return 0
   }
   if (cmd === 'serve') {
-    serve(Number(flag(rest, '--port') ?? 3790), flag(rest, '--host') ?? '127.0.0.1')
+    const env = process.env
+    serve(
+      Number(flag(rest, '--port') ?? env.PORT ?? 3790),
+      flag(rest, '--host') ?? env.HOST ?? '127.0.0.1',
+      env.WALTER_API_KEY || undefined,
+    )
     return 0
   }
   console.error(`Unknown command: ${cmd}\n\n${USAGE}`)

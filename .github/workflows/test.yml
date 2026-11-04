@@ -29,3 +29,16 @@ jobs:
           sleep 1
           node -e "const fs=require('fs');fetch('http://127.0.0.1:3790/run',{method:'POST',body:JSON.stringify({terms:JSON.parse(fs.readFileSync('terms.json')),flows:JSON.parse(fs.readFileSync('flows.json'))})}).then(r=>{if(r.status!==200)process.exit(1);return r.json()}).then(j=>{if(!j.totals)process.exit(1);console.log('serve ok')})"
           kill %1
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t walter .
+      - name: The image serves /health and /run
+        run: |
+          docker run -d -p 3790:3790 -e WALTER_API_KEY=ci-key --name walter walter
+          sleep 2
+          curl -fsS http://127.0.0.1:3790/health
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://127.0.0.1:3790/run -d '{}')" = 401
+          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Authorization: Bearer ci-key' http://127.0.0.1:3790/run -d '{}')" = 400

@@ -38,9 +38,9 @@ result.accruedCarry  // carry earned at each NAV
 result.totals        // each partner's contributed, distributed and net
 ```
 
-From any other language, run `walter serve` and send the terms and flows to its local web API.
-It listens on `http://127.0.0.1:3790` by default and returns the same result as JSON. Your fund
-data stays on your machine.
+From any other language, run `walter serve` and send the terms and flows to its web API. It
+returns the same result as JSON. Run it on your laptop or on your own server next to your code
+(below); either way your fund data stays on infrastructure you control.
 
 ```python
 import json, urllib.request
@@ -52,7 +52,34 @@ result = json.load(urllib.request.urlopen(req))
 ```
 
 `GET /health` returns the version. If the terms or flows can't be computed, `/run` answers 422
-with `{"error": <code>, "message": ...}`. Use `--port` and `--host` to change where it listens.
+with `{"error": <code>, "message": ...}`.
+
+### Running the API on a server
+
+`walter serve` runs anywhere Node 18 or later does, next to your own code: a VM, a container, or
+a platform like Fly, Render or Railway. It keeps no state and stores nothing, so you can run as
+many copies as you like behind a load balancer.
+
+```sh
+npm install -g @hemrock/walter
+WALTER_API_KEY=change-me HOST=0.0.0.0 PORT=8080 walter serve
+```
+
+Or build the Docker image from this repo:
+
+```sh
+docker build -t walter .
+docker run -p 3790:3790 -e WALTER_API_KEY=change-me walter
+```
+
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `PORT` or `--port` | `3790` | The port to listen on |
+| `HOST` or `--host` | `127.0.0.1` (`0.0.0.0` in Docker) | The address to listen on; use `0.0.0.0` to accept outside connections |
+| `WALTER_API_KEY` | none | When set, `/run` requires `Authorization: Bearer <key>`; `/health` stays open for load balancer checks |
+
+Set an API key, or keep the server on a private network, whenever it can be reached from outside
+your machine. Requests are limited to 10 MB.
 
 ## What you give it
 
