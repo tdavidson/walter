@@ -2,6 +2,7 @@
 // The `walter` command: run a fund's terms and flows and print who gets what.
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { createServer } from 'node:http'
 import { run, SPEC_VERSION, ENGINE } from './index.ts'
 import { WalterError } from './errors.ts'
 import type { Flow, Result, Terms } from './types.ts'
@@ -13,6 +14,8 @@ Usage:
   walter run <terms> <flows>       print each partner's distributions, fees and carry
   walter run <terms> <flows> --json
                                    print the full result as JSON
+  walter serve [--port 3790] [--host 127.0.0.1]
+                                   run a local web API: POST {"terms", "flows"} to /run
 
 <terms> is a Walter terms document. <flows> is a JSON array of dated flows, or a
 document with a "flows" array. The spec: https://github.com/tdavidson/walter`
@@ -129,6 +132,60 @@ function summary(result: Result): string {
   return out.join('\n')
 }
 
+function flag(args: string[], name: string): string | undefined {
+  const i = args.indexOf(name)
+  return i >= 0 ? args[i + 1] : undefined
+}
+
+const MAX_BODY = 10 * 1024 * 1024
+
+function serve(port: number, host: string): void {
+  const server = createServer((req, res) => {
+    const send = (status: number, body: unknown) => {
+      res.writeHead(status, { 'content-type': 'application/json' })
+      res.end(JSON.stringify(body))
+    }
+    const path = (req.url ?? '/').split('?')[0]
+    if (req.method === 'GET' && (path === '/' || path === '/health')) {
+      return send(200, { engine: ENGINE.name, version: ENGINE.version, walter: SPEC_VERSION, run: 'POST /run' })
+    }
+    if (path !== '/run') return send(404, { error: 'not-found', message: 'POST {"terms", "flows"} to /run' })
+    if (req.method !== 'POST') return send(405, { error: 'method-not-allowed', message: 'Use POST' })
+
+    const chunks: Buffer[] = []
+    let size = 0
+    req.on('data', (c: Buffer) => {
+      size += c.length
+      if (size > MAX_BODY) {
+        send(413, { error: 'too-large', message: 'The request body is over 10 MB' })
+        req.destroy()
+      } else chunks.push(c)
+    })
+    req.on('end', () => {
+      if (res.writableEnded) return
+      let body: { terms?: Terms; flows?: Flow[] }
+      try {
+        body = JSON.parse(Buffer.concat(chunks).toString('utf8'))
+      } catch {
+        return send(400, { error: 'invalid-json', message: 'The body is not valid JSON' })
+      }
+      if (!body || typeof body.terms !== 'object' || !Array.isArray(body.flows)) {
+        return send(400, { error: 'invalid-request', message: 'Send {"terms": {...}, "flows": [...]}' })
+      }
+      try {
+        send(200, run(body.terms, body.flows))
+      } catch (e) {
+        if (e instanceof WalterError) send(422, { error: e.code, message: e.message })
+        else send(500, { error: 'internal', message: (e as Error).message })
+      }
+    })
+  })
+  server.listen(port, host, () => {
+    console.log(`Walter ${ENGINE.version} listening on http://${host}:${port}`)
+    console.log(`POST {"terms": ..., "flows": [...]} to http://${host}:${port}/run`)
+  })
+}
+
 function main(argv: string[]): number {
   const [cmd, ...rest] = argv
   if (!cmd || cmd === '--help' || cmd === '-h' || cmd === 'help') {
@@ -163,6 +220,10 @@ function main(argv: string[]): number {
     const flows = Array.isArray(raw) ? raw : raw.flows
     const result = run(terms, flows)
     console.log(json ? JSON.stringify(result, null, 2) : summary(result))
+    return 0
+  }
+  if (cmd === 'serve') {
+    serve(Number(flag(rest, '--port') ?? 3790), flag(rest, '--host') ?? '127.0.0.1')
     return 0
   }
   console.error(`Unknown command: ${cmd}\n\n${USAGE}`)

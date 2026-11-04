@@ -3,7 +3,7 @@
 Walter calculates the money in a venture fund. Give it the fund's terms and its cash flows, and it
 tells you who gets each dollar when the fund pays out, how much carry the GP earns, what the
 management fee comes to for each LP, and what the GP owes back at the end. Install it from npm and
-run it from the command line, or call it from your own code.
+run it from the command line, call it from your code, or run it as a local web API.
 
 ```sh
 npm install -g @hemrock/walter
@@ -24,6 +24,36 @@ split              7,164,649.47  17,368,847.20  11,289,750.68
 Add `--json` for the full result: every line of every distribution, fees by period and partner,
 carry accrued at each NAV, clawback and escrow.
 
+## Calling it from your code
+
+In JavaScript or TypeScript, call it directly:
+
+```ts
+import { run } from '@hemrock/walter'
+
+const result = run(terms, flows)
+result.allocations   // every distribution line: date, step, partner, amount
+result.fees          // management fee by period, with each LP's share
+result.accruedCarry  // carry earned at each NAV
+result.totals        // each partner's contributed, distributed and net
+```
+
+From any other language, run `walter serve` and send the terms and flows to its local web API.
+It listens on `http://127.0.0.1:3790` by default and returns the same result as JSON. Your fund
+data stays on your machine.
+
+```python
+import json, urllib.request
+
+body = json.dumps({"terms": terms, "flows": flows}).encode()
+req = urllib.request.Request("http://127.0.0.1:3790/run", data=body,
+                             headers={"content-type": "application/json"})
+result = json.load(urllib.request.urlopen(req))
+```
+
+`GET /health` returns the version. If the terms or flows can't be computed, `/run` answers 422
+with `{"error": <code>, "message": ...}`. Use `--port` and `--host` to change where it listens.
+
 ## What you give it
 
 - **The terms**: what the LPA says about the economics. For example, an 8% preferred return, a
@@ -39,8 +69,8 @@ carry accrued at each NAV, clawback and escrow.
   quarter end, from the LPA's terms.
 - **Checking someone else's numbers.** Compare Walter's answer with an administrator's distribution
   notice or your own spreadsheet.
-- **Building fund software.** Call Walter from your code instead of writing a waterfall engine, or
-  test your own engine against Walter's 95 test cases (below).
+- **Building fund software.** Call Walter from your code, in any language, instead of writing a
+  waterfall engine. Or test your own engine against Walter's 95 test cases (below).
 - **Writing terms down once.** The terms file names every choice an LPA leaves open, so the GP,
   administrator, auditor and LPs can all work from the same file.
 

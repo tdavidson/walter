@@ -25,3 +25,7 @@ jobs:
           cd "$(mktemp -d)"
           node "$GITHUB_WORKSPACE/engine/dist/cli.js" init
           node "$GITHUB_WORKSPACE/engine/dist/cli.js" run terms.json flows.json
+          node "$GITHUB_WORKSPACE/engine/dist/cli.js" serve --port 3790 &
+          sleep 1
+          node -e "const fs=require('fs');fetch('http://127.0.0.1:3790/run',{method:'POST',body:JSON.stringify({terms:JSON.parse(fs.readFileSync('terms.json')),flows:JSON.parse(fs.readFileSync('flows.json'))})}).then(r=>{if(r.status!==200)process.exit(1);return r.json()}).then(j=>{if(!j.totals)process.exit(1);console.log('serve ok')})"
+          kill %1
