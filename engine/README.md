@@ -1,6 +1,22 @@
 # @hemrock/walter
 
-The reference engine for [Walter](../README.md), the open spec for venture fund economics.
+Walter calculates a venture fund's economics: distributions by partner and tier, preferred return,
+catch-up, carry, recycling, clawback and management fees. It implements the
+[Walter spec](https://github.com/tdavidson/walter) and passes all of its test cases.
+
+```sh
+npm install @hemrock/walter
+```
+
+From the command line:
+
+```sh
+npx walter init                        # example terms.json and flows.json
+npx walter run terms.json flows.json   # distributions, fees and carry by partner
+npx walter run terms.json flows.json --json
+```
+
+From code:
 
 ```ts
 import { run } from '@hemrock/walter'

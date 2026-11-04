@@ -19,3 +19,9 @@ jobs:
           npm run -s vectors
           npm run -s compat
           git diff --exit-code results COMPATIBILITY.md
+      - name: Package builds and the walter command runs
+        run: |
+          npm run build -w engine
+          cd "$(mktemp -d)"
+          node "$GITHUB_WORKSPACE/engine/dist/cli.js" init
+          node "$GITHUB_WORKSPACE/engine/dist/cli.js" run terms.json flows.json

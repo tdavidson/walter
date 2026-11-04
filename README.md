@@ -1,52 +1,61 @@
 # Walter
 
-Walter works out the money in a venture fund: who gets each dollar when the fund pays out, how
-much the GP earns in carry, what the management fee comes to, and what the GP owes back at the
-end. It is an open spec, with 95 test cases and a free reference engine, so anyone can check
-whether a spreadsheet, an administrator or a piece of fund software gets those numbers right.
+Walter calculates the money in a venture fund. Give it the fund's terms and its cash flows, and it
+tells you who gets each dollar when the fund pays out, how much carry the GP earns, what the
+management fee comes to for each LP, and what the GP owes back at the end. Install it from npm and
+run it from the command line, or call it from your own code.
 
-## Why
+```sh
+npm install -g @hemrock/walter
+walter init                        # writes an example terms.json and flows.json
+walter run terms.json flows.json   # prints each partner's distributions, fees and carry
+```
 
-Fund agreements (LPAs) are ambiguous in a handful of places that move real money: which capital
-comes back before carry, whether the preferred return grows on all capital paid in or only on
-capital not yet returned, what a "50% catch-up" is a catch-up to. Two systems can read the same
-LPA differently and both look right on their own.
+```
+Distribution on 2032-09-30
+step                         gp           lp-a           lp-b
+return-of-capital    400,000.00  24,000,000.00  15,600,000.00
+carry-free           700,000.00           0.00           0.00
+preferred-return           0.00  16,231,152.80  10,550,249.32
+catch-up           6,695,350.53           0.00           0.00
+split              7,164,649.47  17,368,847.20  11,289,750.68
+```
 
-Hemrock found this firsthand. Its three engines that compute waterfalls agreed on simple terms and
-gave different answers on real ones, and none of them was wrong by its own reading. Walter gives
-each of those choices a name, so a reading is something you write down in the terms, not a
-default hidden in someone's code. All three Hemrock engines now pass every test case.
+Add `--json` for the full result: every line of every distribution, fees by period and partner,
+carry accrued at each NAV, clawback and escrow.
 
-## What it does
-
-You give Walter two things:
+## What you give it
 
 - **The terms**: what the LPA says about the economics. For example, an 8% preferred return, a
   full catch-up, 20% carry, and a 2% fee that steps down to 1.5% after the investment period.
-  You write these once in a short JSON file (example below), or start from a standard setup.
-- **The cash flows**: what actually happened, with dates. Capital calls, investments, exits,
-  write-offs and quarterly NAVs.
+  Edit the `terms.json` that `walter init` writes, or see [spec/02-terms.md](spec/02-terms.md)
+  for every option.
+- **The cash flows**: what happened, with dates. Capital calls, investments, exits, write-offs and
+  NAVs. See [spec/03-flows.md](spec/03-flows.md).
 
-Walter gives back every line of every distribution, by partner and by step (return of capital,
-preferred return, catch-up, carry), the management fee each period for each LP, the carry accrued
-at each NAV, and any clawback the GP owes at the end of the fund.
+## What people use it for
 
-## How people use it
+- **Running a fund's waterfall.** Work out a distribution before it goes out, or carry accrued at
+  quarter end, from the LPA's terms.
+- **Checking someone else's numbers.** Compare Walter's answer with an administrator's distribution
+  notice or your own spreadsheet.
+- **Building fund software.** Call Walter from your code instead of writing a waterfall engine, or
+  test your own engine against Walter's 95 test cases (below).
+- **Writing terms down once.** The terms file names every choice an LPA leaves open, so the GP,
+  administrator, auditor and LPs can all work from the same file.
 
-1. **To check a number.** Put in your fund's terms and cash flows and compare Walter's answer with
-   your administrator's distribution notice or your own model. If they differ, the terms show
-   which reading of the LPA each side used.
-2. **To check software.** Run a waterfall model or fund accounting system against the 95 test
-   cases. Each is a small made-up fund with a known right answer. You get a scorecard of what it
-   gets right, topic by topic, like the one in [COMPATIBILITY.md](COMPATIBILITY.md).
-3. **To agree on terms.** A GP can write the fund's terms as a Walter file and give the same file
-   to the administrator, the auditor and LPs, so everyone is checking against the same thing.
-4. **To draft an LPA.** The spec lists the places LPA language is usually read more than one way.
-   Each term can carry the LPA section and quote it came from.
+## Why we built it
 
-The test cases are the core of Walter. The spec explains them, and the reference engine exists to
-show they agree with each other. Specs like this traditionally call test cases "vectors", which is
-why the folder and the spec pages use that word.
+LPAs are ambiguous in a handful of places that move real money: which capital comes back before
+carry, whether the preferred return grows on all capital paid in or only on capital not yet
+returned, what a "50% catch-up" is a catch-up to. Hemrock had three engines that computed
+waterfalls, and on real terms they gave different answers. None was wrong by its own reading. Each
+had made a choice in code that nobody had written down.
+
+Walter gives each of those choices a name in the terms, and every choice comes with test cases: a
+small fund with a worked answer. All three Hemrock engines now use the same terms and pass every
+test case. Specs like this traditionally call test cases "vectors", which is why the folder and the
+spec pages use that word.
 
 ## What's in this repo
 
@@ -61,7 +70,7 @@ results/   each engine's results
 
 ## For developers
 
-The rest of this page is for people running the engine or testing their own.
+The rest of this page is for people calling Walter from code or testing their own engine.
 
 ### Example terms
 
@@ -89,7 +98,7 @@ The rest of this page is for people running the engine or testing their own.
 Flows are a dated list of contributions, investments, proceeds, write-offs, NAVs and fee income.
 See [spec/02-terms.md](spec/02-terms.md) and [spec/03-flows.md](spec/03-flows.md) for every field.
 
-### Using the reference engine
+### Using it in code
 
 ```ts
 import { run } from '@hemrock/walter'
@@ -98,9 +107,9 @@ const result = run(terms, flows)
 result.allocations // [{ date, tier, partner, amount }, ...]
 ```
 
-Node 22.18 or later runs the TypeScript source directly. The one dependency is `decimal.js`.
-The package isn't on npm yet, so for now clone this repository and import from
-`engine/src/index.ts`.
+`npm install @hemrock/walter` for use in your code. It runs on Node 18 or later and its one
+dependency is `decimal.js`. Inside this repo, Node 22.18 or later runs the TypeScript source
+directly, with no build step.
 
 ### Running the test cases
 

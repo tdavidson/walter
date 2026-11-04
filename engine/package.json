@@ -4,12 +4,43 @@
   "description": "Reference engine for the Walter fund economics spec: distribution waterfalls, preferred return, catch-up, recycling, clawback and management fees.",
   "license": "Apache-2.0",
   "type": "module",
+  "bin": {
+    "walter": "./dist/cli.js"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "files": [
-    "src",
-    "README.md"
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tdavidson/walter.git",
+    "directory": "engine"
+  },
+  "homepage": "https://github.com/tdavidson/walter",
+  "keywords": [
+    "venture",
+    "fund",
+    "waterfall",
+    "carry",
+    "carried-interest",
+    "preferred-return",
+    "clawback",
+    "management-fee",
+    "lpa"
   ],
   "dependencies": {
     "decimal.js": "^10.6.0"
